@@ -1,0 +1,17 @@
+[package]
+name = "alarkhabil-server"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+hyper = { version = "0.14", features = ["full"] }
+tokio = { version = "1", features = ["full"] }
+serde = "1.0"
+serde_json = "1.0"
+rusqlite = { version = "*", features = ["bundled"] }
+anyhow = "1.0"
+dotenvy = "0.15"
+log = "0.4"
+env_logger = "0.10"
