@@ -2,12 +2,19 @@ use std::env;
 use std::net::SocketAddr;
 use std::str::FromStr;
 
-use std::convert::Infallible;
-use hyper::server::conn::AddrStream;
-use hyper::{Body, Request, Response, Server};
-use hyper::service::{make_service_fn, service_fn};
 use hyper::StatusCode;
 use std::sync::{Arc, Mutex};
+
+use std::future::Future;
+
+use axum::{
+    extract::State,
+    routing::get,
+    Router,
+    Server,
+    http::header,
+    response::IntoResponse,
+};
 
 use sha2::Sha256;
 use hmac::{Hmac, Mac};
@@ -36,46 +43,45 @@ struct AppState {
     primary_secret: PrimarySecret,
 }
 
-async fn handle_request(_req: &mut Request<Body>, state: Arc<AppState>) -> anyhow::Result<Response<Body>> {
-    let author_count: u32 = {
-        let db_connection = state.db_connection.lock().unwrap();
-        db_connection.query_row("SELECT COUNT(*) FROM author", [], |row| {
-            row.get(0)
-        })?
-    };
+async fn handle_anyhow_error(err: anyhow::Error) -> impl IntoResponse {
+    log::error!("Error: {}", err);
 
-    let secret_key = PrivateKey::new("ed25519")?;
-    let msg = b"Hello, world!";
-    let signed_msg = SignedMessage::create(secret_key, msg)?;
-    signed_msg.verify()?;
-
-    Ok(
-        Response::builder()
-            .status(StatusCode::OK)
-            .body(Body::from(format!("Hello, world! {} authors", author_count)))
-            .unwrap()
+    (
+        StatusCode::INTERNAL_SERVER_ERROR,
+        [(header::CONTENT_TYPE, "text/html")],
+        "<!doctype html><html><head><title>Internal Server Error</title></head><body><h1>Internal Server Error</h1></body></html>",
     )
 }
 
-async fn process_request(mut req: Request<Body>, _addr: SocketAddr, state: Arc<AppState>) -> Result<Response<Body>, Infallible> {
-    let result = handle_request(&mut req, state).await;
-
-    let response = match result {
+async fn result_into_response<T: IntoResponse, Fut: Future<Output = anyhow::Result<T>>>(result: Fut) -> impl IntoResponse {
+    match result.await {
         Ok(response) => {
-            response
+            response.into_response()
         },
         Err(e) => {
-            log::error!("Error: {}", e);
-            let response = Response::builder()
-                .status(StatusCode::INTERNAL_SERVER_ERROR)
-                .body(Body::from("Internal Server Error"))
-                .unwrap();
-            response
+            handle_anyhow_error(e).await.into_response()
         }
-    };
+    }
+}
 
-    log::debug!("[{}] {} {}", response.status(), req.method(), req.uri());
-    Ok(response)
+async fn get_root(
+    State(state): State<Arc<AppState>>,
+) -> impl IntoResponse {
+    result_into_response(async move {
+        let author_count: u32 = {
+            let db_connection = state.db_connection.lock().unwrap();
+            db_connection.query_row("SELECT COUNT(*) FROM author", [], |row| {
+                row.get(0)
+            })?
+        };
+    
+        let secret_key = PrivateKey::new("ed25519")?;
+        let msg = b"Hello, world!";
+        let signed_msg = SignedMessage::create(secret_key, msg)?;
+        signed_msg.verify()?;
+    
+        Ok(format!("Hello, world! {} authors", author_count))
+    }).await
 }
 
 #[tokio::main]
@@ -121,18 +127,11 @@ async fn main() -> anyhow::Result<()> {
 
     log::debug!("Length of a derived secret: {}", state.primary_secret.derive_secret("test").len());
 
-    let make_svc = make_service_fn(|conn: &AddrStream| {
-        let addr = conn.remote_addr();
-        let state = state.clone();
-        async move {
-            let addr = addr.clone();
-            Ok::<_, Infallible>(service_fn(move |req : Request<Body>| {
-                process_request(req, addr, state.clone())
-            }))
-        }
-    });
+    let app = Router::new()
+        .route("/", get(get_root))
+        .with_state(state.clone());
 
-    let server = Server::bind(&addr).serve(make_svc);
+    let server = Server::bind(&addr).serve(app.into_make_service());
 
     log::info!("Listening on http://{}", addr);
     server.await?;
