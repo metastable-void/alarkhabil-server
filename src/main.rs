@@ -12,6 +12,8 @@ use std::sync::{Arc, Mutex};
 use sha2::Sha256;
 use hmac::{Hmac, Mac};
 
+use alarkhabil_server::{PrivateKey, SignedMessage};
+
 
 type HmacSha256 = Hmac<Sha256>;
 
@@ -41,6 +43,11 @@ async fn handle_request(_req: &mut Request<Body>, state: Arc<AppState>) -> anyho
             row.get(0)
         })?
     };
+
+    let secret_key = PrivateKey::new("ed25519")?;
+    let msg = b"Hello, world!";
+    let signed_msg = SignedMessage::create(secret_key, msg)?;
+    signed_msg.verify()?;
 
     Ok(
         Response::builder()
