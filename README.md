@@ -328,12 +328,12 @@ Response (post found):
 ```
 HTTP/1.1 200
 {
-    
     "post_uuid": "<posts's uuid>",
     "channel": {
         "uuid": "<channel's uuid>",
         "handle": "<channel's handle>",
-        "name": "<channel's name>"
+        "name": "<channel's name>",
+        "lang": "<channel's language code>"
     },
     "revision_uuid": "<revision's uuid>",
     "revision_date": "<revision date in seconds since UNIX epoch>",
@@ -441,3 +441,233 @@ HTTP/1.1 200
 }
 ```
 
+#### POST /api/v1/channel/new
+
+**Post data:** Alarkhabil-ed25519-signed JSON
+
+**Response type:** JSON
+
+Will return **400 Bad Request** for invalid requests.
+
+Payload:
+
+```
+{
+    "command": "channel_new",
+    "handle": "<channel's handle>",
+    "name": "<channel's name>",
+    "lang": "<channel's language code>"
+}
+```
+
+Response example (same as `/api/v1/channel/info`):
+
+```
+HTTP/1.1 200
+{
+    "uuid": "<channel's uuid>",
+    "handle": "<channel's handle>",
+    "name": "<channel name>",
+    "created_at": <seconds since UNIX epoch (integer)>
+    "lang": "<channel's language code>",
+    "description_text": "<description markdown>",
+    "description_html": "<description html>"
+}
+```
+
+#### POST /api/v1/post/new
+
+**Post data:** Alarkhabil-ed25519-signed JSON
+
+**Response type:** JSON
+
+Will return **400 Bad Request** for invalid requests.
+
+Payload:
+
+```
+{
+    "command": "post_new",
+    "channel_uuid": "<channel's uuid>",
+    "title": "<post title>",
+    "text": "<post markdown text>",
+    "tags": [
+        "<tag>",
+        ...
+    ]
+}
+```
+
+Response example (same as `/api/v1/post/info`):
+
+```
+HTTP/1.1 200
+{
+    "post_uuid": "<posts's uuid>",
+    "channel": {
+        "uuid": "<channel's uuid>",
+        "handle": "<channel's handle>",
+        "name": "<channel's name>",
+        "lang": "<channel's language code>"
+    },
+    "revision_uuid": "<revision's uuid>",
+    "revision_date": "<revision date in seconds since UNIX epoch>",
+    "title": "<title>",
+    "author": {
+        "uuid": "<author's uuid>",
+        "name": "<author's name>"
+    },
+    "revision_text": "<revision text>",
+    "revision_html": "<revision html>",
+    "tags": [
+        "<tag>",
+        ...
+    ]
+}
+```
+
+#### POST /api/v1/self/change_credentials
+
+**Post data:** Alarkhabil-ed25519-signed JSON
+
+**Response type:** JSON
+
+Will return **400 Bad Request** for invalid requests.
+
+Payload:
+
+```
+{
+    "command": "self_change_credentials",
+    "new_algo": "<new public key's algorithm>",
+    "new_public_key": "<base64-encoded new public key>",
+    "signature": "<base64-encoded signature for old public key binary data by new public key>"
+}
+```
+
+Response example:
+
+```
+HTTP/1.1 200
+{
+    "status": "ok"
+}
+```
+
+#### POST /api/v1/self/update
+
+**Post data:** Alarkhabil-ed25519-signed JSON
+
+**Response type:** JSON
+
+Will return **400 Bad Request** for invalid requests.
+
+Payload:
+
+```
+{
+    "command": "self_update",
+    "name": "<new name>",
+    "description_text": "<new description markdown>"
+}
+```
+
+Response example (same as `/api/v1/author/info`):
+
+```
+HTTP/1.1 200
+{
+    "uuid": "<author's uuid>",
+    "name": "<author's name>",
+    "created_at": <registration date in seconds since UNIX epoch (integer)>
+    "description_text": "<description markdown>",
+    "description_html": "<description html>"
+}
+```
+
+#### POST /api/v1/channel/update
+
+**Post data:** Alarkhabil-ed25519-signed JSON
+
+**Response type:** JSON
+
+Will return **400 Bad Request** for invalid requests.
+
+Payload:
+
+```
+{
+    "command": "channel_update",
+    "uuid": "<channel's uuid>",
+    "handle": "<channel's new handle>",
+    "name": "<channel's new name>",
+    "lang": "<channel's new language code>",
+    "description_text": "<new description markdown>"
+}
+```
+
+Response example (same as `/api/v1/channel/info`):
+
+```
+HTTP/1.1 200
+{
+    "uuid": "<channel's uuid>",
+    "handle": "<channel's handle>",
+    "name": "<channel name>",
+    "created_at": <seconds since UNIX epoch (integer)>
+    "lang": "<channel's language code>",
+    "description_text": "<description markdown>",
+    "description_html": "<description html>"
+}
+```
+
+#### POST /api/v1/post/update
+
+**Post data:** Alarkhabil-ed25519-signed JSON
+
+**Response type:** JSON
+
+Will return **400 Bad Request** for invalid requests.
+
+Payload:
+
+```
+{
+    "command": "post_update",
+    "uuid": "<channel's uuid>",
+    "title": "<new post title>",
+    "text": "<new post markdown text>",
+    "tags": [
+        "<tag>",
+        ...
+    ]
+}
+```
+
+Response example (same as `/api/v1/post/info`):
+
+```
+HTTP/1.1 200
+{
+    "post_uuid": "<posts's uuid>",
+    "channel": {
+        "uuid": "<channel's uuid>",
+        "handle": "<channel's handle>",
+        "name": "<channel's name>",
+        "lang": "<channel's language code>"
+    },
+    "revision_uuid": "<revision's uuid>",
+    "revision_date": "<revision date in seconds since UNIX epoch>",
+    "title": "<title>",
+    "author": {
+        "uuid": "<author's uuid>",
+        "name": "<author's name>"
+    },
+    "revision_text": "<revision text>",
+    "revision_html": "<revision html>",
+    "tags": [
+        "<tag>",
+        ...
+    ]
+}
+```
