@@ -18,6 +18,8 @@ The administrator uses the *new invite token* to make a request of this type, an
 **Query format:** `?token={new invite token}`
 **Response type:** JSON
 
+Will return **400 Bad Request** for invalid requests.
+
 Response:
 
 ```
@@ -41,6 +43,8 @@ The response will contain the new account's UUID.
 **Post data:** Alarkhabil-ed25519-signed JSON
 
 **Response type:** JSON
+
+Will return **400 Bad Request** for invalid requests.
 
 Payload:
 
@@ -143,6 +147,85 @@ HTTP/1.1 200
 ```
 
 Response (channel not found or deleted):
+
+```
+HTTP/1.1 404
+{
+    "status": "not found"
+}
+```
+
+#### GET /api/v1/channel/posts
+
+**Query format:** `?uuid={channel uuid}`
+
+**Response type:** JSON
+
+Response (channel found):
+
+Empty array will be returned if no posts are found.
+
+```
+HTTP/1.1 200
+[
+    {
+        "post_uuid": "<posts's uuid>",
+        "revision_uuid": "<revision's uuid>",
+        "revision_date": "<revision date in seconds since UNIX epoch>",
+        "title": "<title>",
+        "author": {
+            "uuid": "<author's uuid>",
+            "name": "<author's name>"
+        }
+    },
+    ...
+]
+```
+
+Response (channel not found or deleted):
+
+```
+HTTP/1.1 404
+{
+    "status": "not found"
+}
+```
+
+#### GET /api/v1/post/info
+
+**Query format:** `?uuid={post uuid}`
+
+**Response type:** JSON
+
+Response (post found):
+
+```
+HTTP/1.1 200
+{
+    
+    "post_uuid": "<posts's uuid>",
+    "channel": {
+        "uuid": "<channel's uuid>",
+        "handle": "<channel's handle>",
+        "name": "<channel's name>"
+    },
+    "revision_uuid": "<revision's uuid>",
+    "revision_date": "<revision date in seconds since UNIX epoch>",
+    "title": "<title>",
+    "author": {
+        "uuid": "<author's uuid>",
+        "name": "<author's name>"
+    },
+    "revision_text": "<revision text>",
+    "revision_html": "<revision html>",
+    "tags": [
+        "<tag>",
+        ...
+    ]
+}
+```
+
+Response (post not found or deleted):
 
 ```
 HTTP/1.1 404
