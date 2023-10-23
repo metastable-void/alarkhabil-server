@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS `author` (
   uuid BLOB UNIQUE NOT NULL,
   name BLOB NOT NULL DEFAULT '',
   registered_date INTEGER NOT NULL, -- seconds since UNIX epoch
-  is_deleted INTEGER NOT NULL DEFAULT 0
+  is_deleted INTEGER NOT NULL DEFAULT 0,
+  description_text BLOB NOT NULL DEFAULT ''
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS `index_author_uuid` ON `author` (

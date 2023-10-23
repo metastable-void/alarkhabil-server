@@ -1,6 +1,11 @@
 # Al Arkhabil server software
 
-## API endpoints
+## API documentation
+
+* Strings are always in UTF-8.
+* Maximum post size in Markdown is 100kB.
+* Maximum bio/channel description size in Markdown is 4kB.
+* File uploads/user icons are not supported in the first release, but will be supported in future releases.
 
 ### Invites v1
 
@@ -57,6 +62,34 @@ HTTP/1.1 200
 ```
 
 ### Public endpoints v1
+
+#### GET /api/v1/author/info
+
+**Query format:** `?uuid={author uuid}`
+
+**Response type:** JSON
+
+Response (author found):
+
+```
+HTTP/1.1 200
+{
+    "uuid": "<author's uuid>",
+    "name": "<author's name>",
+    "created_at": <registration date in seconds since UNIX epoch (integer)>
+    "description_text": "<description markdown>",
+    "description_html": "<description html>"
+}
+```
+
+Response (author not found or deleted):
+
+```
+HTTP/1.1 404
+{
+    "status": "not found"
+}
+```
 
 #### GET /api/v1/channel/info
 
