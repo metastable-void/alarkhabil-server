@@ -95,6 +95,74 @@ HTTP/1.1 404
 }
 ```
 
+#### GET /api/v1/author/channels
+
+**Query format:** `?uuid={author uuid}`
+
+**Response type:** JSON
+
+Empty array will be returned if no channels are found.
+
+Response (author found):
+
+```
+HTTP/1.1 200
+[
+    {
+        "uuid": "<channel's uuid>",
+        "handle": "<channel's handle>",
+        "name": "<channel's name>"
+    },
+    ...
+]
+```
+
+Response (author not found or deleted):
+
+```
+HTTP/1.1 404
+{
+    "status": "not found"
+}
+```
+
+#### GET /api/v1/author/posts
+
+**Query format:** `?uuid={author uuid}`
+
+**Response type:** JSON
+
+Empty array will be returned if no posts are found.
+
+Response (author found):
+
+```
+HTTP/1.1 200
+[
+    {
+        "post_uuid": "<posts's uuid>",
+        "revision_uuid": "<revision's uuid>",
+        "revision_date": "<revision date in seconds since UNIX epoch>",
+        "title": "<title>",
+        "channel": {
+            "uuid": "<channel's uuid>",
+            "handle": "<channel's handle>",
+            "name": "<channel's name>"
+        }
+    },
+    ...
+]
+```
+
+Response (author not found or deleted):
+
+```
+HTTP/1.1 404
+{
+    "status": "not found"
+}
+```
+
 #### GET /api/v1/channel/info
 
 **Query format:** `?uuid={channel uuid}`
