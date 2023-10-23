@@ -6,6 +6,7 @@
 * Maximum post size in Markdown is 100kB.
 * Maximum bio/channel description size in Markdown is 4kB.
 * File uploads/user icons are not supported in the first release, but will be supported in future releases.
+* API pagination is not supported first. Dangerous queries are limited to 1000 entries.
 
 ### Admin endpoints v1
 
