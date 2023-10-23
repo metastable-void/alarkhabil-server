@@ -1,8 +1,16 @@
 
-#![feature(impl_trait_in_assoc_type)]
-
 use ed25519_dalek::{SigningKey, VerifyingKey, Signature, Signer};
 use serde::{Serialize, Deserialize};
+
+use sha2::Sha256;
+use hmac::{Hmac, Mac};
+
+use digest::CtOutput;
+use generic_array::GenericArray;
+
+// Create alias for HMAC-SHA256
+type HmacSha256 = Hmac<Sha256>;
+use std::time::SystemTime;
 
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -19,6 +27,12 @@ pub struct SignedMessage {
     msg: Vec<u8>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct NewInviteResult {
+    #[serde(with="base64")]
+    pub invite: Vec<u8>,
+}
+
 pub struct PrivateKey {
     algo: String,
     key: Vec<u8>,
@@ -26,7 +40,7 @@ pub struct PrivateKey {
 
 impl PrivateKey {
     pub fn new(algo: &str) -> Result<PrivateKey, anyhow::Error> {
-        if algo != "ed25519" {
+        if algo != "ed25519" && algo != "hmac-sha256" {
             return Err(anyhow::anyhow!("Unsupported algorithm: {}", algo));
         }
 
@@ -35,6 +49,21 @@ impl PrivateKey {
         Ok(PrivateKey {
             algo: algo.to_string(),
             key: secret_key.to_vec(),
+        })
+    }
+
+    pub fn from_bytes(algo: &str, buf: &[u8]) -> Result<PrivateKey, anyhow::Error> {
+        if algo != "ed25519" && algo != "hmac-sha256" {
+            return Err(anyhow::anyhow!("Unsupported algorithm: {}", algo));
+        }
+
+        if algo == "ed25519" && buf.len() != 32 {
+            return Err(anyhow::anyhow!("Invalid key length"));
+        }
+
+        Ok(PrivateKey {
+            algo: algo.to_string(),
+            key: buf.to_vec(),
         })
     }
 
@@ -51,6 +80,19 @@ impl SignedMessage {
     pub fn create(secret_key: PrivateKey, msg: &[u8]) -> Result<SignedMessage, anyhow::Error> {
         let algo = secret_key.algo();
         let secret_key = secret_key.key();
+
+        if algo == "hmac-sha256" {
+            let mut hmac = HmacSha256::new_from_slice(secret_key).unwrap();
+            hmac.update(msg);
+            let signature = hmac.finalize().into_bytes().to_vec();
+
+            return Ok(SignedMessage {
+                algo: algo.to_string(),
+                pubk: vec![],
+                sig: signature,
+                msg: msg.to_vec(),
+            });
+        }
 
         if algo != "ed25519" {
             return Err(anyhow::anyhow!("Unsupported algorithm: {}", algo));
@@ -73,6 +115,10 @@ impl SignedMessage {
     }
 
     pub fn verify(&self) -> Result<&[u8], anyhow::Error> {
+        if self.algo == "hmac-sha256" {
+            return Err(anyhow::anyhow!("You must provide secret key for HMAC: {}", self.algo));
+        }
+
         if self.algo != "ed25519" {
             return Err(anyhow::anyhow!("Unsupported algorithm: {}", self.algo));
         }
@@ -83,6 +129,32 @@ impl SignedMessage {
         let signature = Signature::from_slice(self.sig.as_slice())?;
         public_key.verify_strict(self.msg.as_slice(), &signature)?;
         Ok(&self.msg)
+    }
+
+    pub fn verify_with_secret(&self, secret_key: PrivateKey) -> Result<&[u8], anyhow::Error> {
+        if self.algo != "hmac-sha256" {
+            return Err(anyhow::anyhow!("Unsupported algorithm: {}", self.algo));
+        }
+
+        let secret_key = secret_key.key();
+
+        let mut hmac = HmacSha256::new_from_slice(secret_key).unwrap();
+        hmac.update(self.msg.as_slice());
+        let signature = hmac.finalize();
+
+        if signature != CtOutput::new(GenericArray::clone_from_slice(&self.sig)) {
+            return Err(anyhow::anyhow!("Invalid signature"));
+        }
+
+        Ok(&self.msg)
+    }
+
+    pub fn public_key(&self) -> Result<&[u8], anyhow::Error> {
+        if self.algo != "ed25519" {
+            return Err(anyhow::anyhow!("Unsupported algorithm: {}", self.algo));
+        }
+
+        Ok(&self.pubk)
     }
 }
 
@@ -105,4 +177,11 @@ mod base64 {
 
 pub fn extract_ed25519_private_key(buf: &[u8]) -> Result<[u8; 32], anyhow::Error> {
     buf.try_into().map_err(|_| anyhow::anyhow!("Invalid length"))
+}
+
+pub fn get_sys_time_in_secs() -> u64 {
+    match SystemTime::now().duration_since(SystemTime::UNIX_EPOCH) {
+        Ok(n) => n.as_secs(),
+        Err(_) => panic!("SystemTime before UNIX EPOCH!"),
+    }
 }
