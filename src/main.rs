@@ -13,7 +13,7 @@ use serde::{Serialize, Deserialize};
 
 use axum::{
     extract::{State, Query},
-    routing::get,
+    routing::{get, post},
     Router,
     Server,
     http::header,
@@ -65,7 +65,6 @@ impl Invite {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct MsgAccountNew {
-    command: String,
     uuid: String,
     name: String,
     invite: String,
@@ -248,7 +247,7 @@ async fn main() -> anyhow::Result<()> {
     let app = Router::new()
         .route("/", get(get_root))
         .route("/api/v1/invite/new", get(api_invite_new))
-        .route("/api/v1/account/new", get(api_account_new))
+        .route("/api/v1/account/new", post(api_account_new))
         .with_state(state.clone());
 
     let server = Server::bind(&addr).serve(app.into_make_service());
