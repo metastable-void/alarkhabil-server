@@ -53,8 +53,6 @@ HTTP/1.1 200
 
 **Query format:** `?token={admin token}&uuid={channel's uuid}`
 
-**Query format:** `?token={admin token}&handle={channel's handle}`
-
 **Post data:** none
 
 **Response type:** JSON
@@ -364,4 +362,82 @@ HTTP/1.1 404
 
 ### Authors' endpoints v1
 
+#### POST /api/v1/account/delete
+
+**TODO: Is this really needed?**
+
+**Post data:** Alarkhabil-ed25519-signed JSON
+
+**Response type:** JSON
+
+Will return **400 Bad Request** for invalid requests.
+
+Payload:
+
+```
+{
+    "command": "delete_account"
+}
+```
+
+Response example:
+
+```
+HTTP/1.1 200
+{
+    "status": "ok"
+}
+```
+
+#### POST /api/v1/channel/delete
+
+**Post data:** Alarkhabil-ed25519-signed JSON
+
+**Response type:** JSON
+
+Will return **400 Bad Request** for invalid requests.
+
+Payload:
+
+```
+{
+    "command": "delete_channel",
+    "uuid": "<channel's uuid>"
+}
+```
+
+Response example:
+
+```
+HTTP/1.1 200
+{
+    "status": "ok"
+}
+```
+
+#### POST /api/v1/post/delete
+
+**Post data:** Alarkhabil-ed25519-signed JSON
+
+**Response type:** JSON
+
+Will return **400 Bad Request** for invalid requests.
+
+Payload:
+
+```
+{
+    "command": "delete_post",
+    "uuid": "<post's uuid>"
+}
+```
+
+Response example:
+
+```
+HTTP/1.1 200
+{
+    "status": "ok"
+}
+```
 
