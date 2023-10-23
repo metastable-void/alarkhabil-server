@@ -2,11 +2,21 @@
 
 ## API endpoints
 
-### Invites
+### Invites v1
 
 #### GET /api/v1/invite/new?token={new invite token}
 
-### Accounts
+**Response type:** JSON
+
+Response:
+
+```
+{
+    "invite": "<invite token string (base64)>"
+}
+```
+
+### Accounts v1
 
 #### POST /api/v1/account/new
 
@@ -18,6 +28,6 @@ Payload:
 {
     "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
     "name": "<name>",
-    "invite": "<invite token string>"
+    "invite": "<invite token string (base64)>"
 }
 ```
