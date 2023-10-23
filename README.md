@@ -1,5 +1,7 @@
 # Al Arkhabil server software
 
+Web app for the independent thought publication platform.
+
 ## API documentation
 
 * Strings are always in UTF-8.
