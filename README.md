@@ -7,7 +7,7 @@
 * Maximum bio/channel description size in Markdown is 4kB.
 * File uploads/user icons are not supported in the first release, but will be supported in future releases.
 
-### Invites v1
+### Admin endpoints v1
 
 #### GET /api/v1/invite/new
 
@@ -16,6 +16,7 @@ The administrator would have access to their *new invite token*.
 The administrator uses the *new invite token* to make a request of this type, and they will get an invite token in base64, which they can tell someone.
 
 **Query format:** `?token={new invite token}`
+
 **Response type:** JSON
 
 Will return **400 Bad Request** for invalid requests.
@@ -26,6 +27,65 @@ Response:
 HTTP/1.1 200
 {
     "invite": "<invite token string (base64)>"
+}
+```
+
+#### POST /api/v1/admin/author/delete
+
+**Query format:** `?token={admin token}&uuid={author's uuid}`
+
+**Post data:** none
+
+**Response type:** JSON
+
+Will return **400 Bad Request** for invalid requests.
+
+Response:
+
+```
+HTTP/1.1 200
+{
+    "status": "ok"
+}
+```
+
+#### POST /api/v1/admin/channel/delete
+
+**Query format:** `?token={admin token}&uuid={channel's uuid}`
+
+**Query format:** `?token={admin token}&handle={channel's handle}`
+
+**Post data:** none
+
+**Response type:** JSON
+
+Will return **400 Bad Request** for invalid requests.
+
+Response:
+
+```
+HTTP/1.1 200
+{
+    "status": "ok"
+}
+```
+
+#### POST /api/v1/admin/post/delete
+
+**Query format:** `?token={admin token}&uuid={post's uuid}`
+
+**Post data:** none
+
+**Response type:** JSON
+
+Will return **400 Bad Request** for invalid requests.
+
+Response:
+
+```
+HTTP/1.1 200
+{
+    "status": "ok"
 }
 ```
 
@@ -301,4 +361,7 @@ HTTP/1.1 404
     "status": "not found"
 }
 ```
+
+### Authors' endpoints v1
+
 
