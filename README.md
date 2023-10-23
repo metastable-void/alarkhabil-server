@@ -29,6 +29,8 @@ The user who wants to create an account, creates an ed25519 key pair and signs t
 The payload contains the new account's name and an invite token from `GET /api/v1/invite/new`.
 The signed message contains the user's ed25519 public key.
 
+The response will contain the new account's UUID.
+
 **Post data:** Alarkhabil-ed25519-signed JSON
 
 **Response type:** JSON
