@@ -65,7 +65,6 @@ impl Invite {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct MsgAccountNew {
-    uuid: String,
     name: String,
     invite: String,
 }
@@ -197,6 +196,7 @@ async fn api_account_new(
 
         Ok(Json(serde_json::json!({
             "status": "ok",
+            "uuid": uuid,
         })))
     }, ErrorReporting::Json).await
 }
