@@ -22,6 +22,8 @@ Response:
 
 **Post data:** Alarkhabil-ed25519-signed JSON
 
+**Response type:** JSON
+
 Payload:
 
 ```
@@ -29,5 +31,13 @@ Payload:
     "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
     "name": "<name>",
     "invite": "<invite token string (base64)>"
+}
+```
+
+Response example:
+
+```
+{
+    "status": "ok"
 }
 ```
