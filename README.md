@@ -24,6 +24,8 @@ The administrator would have access to their *invite making token*.
 
 The administrator uses the *invite making token* to make a request of this type, and they will get an invite token in base64, which they can tell someone.
 
+**Note:** This endpoint uses GET method because it does not change the state on the server (in the first design).
+
 **Query format:** `?token={invite making token}`
 
 **Response type:** JSON
@@ -223,58 +225,6 @@ HTTP/1.1 200
 }
 ```
 
-#### POST /api/v1/channel/delete
-
-**Post data:** Alarkhabil-ed25519-signed JSON
-
-**Response type:** JSON
-
-Will return **400 Bad Request** for invalid requests.
-
-Payload:
-
-```
-{
-    "command": "delete_channel",
-    "uuid": "<channel's uuid>"
-}
-```
-
-Response example:
-
-```
-HTTP/1.1 200
-{
-    "status": "ok"
-}
-```
-
-#### POST /api/v1/post/delete
-
-**Post data:** Alarkhabil-ed25519-signed JSON
-
-**Response type:** JSON
-
-Will return **400 Bad Request** for invalid requests.
-
-Payload:
-
-```
-{
-    "command": "delete_post",
-    "uuid": "<post's uuid>"
-}
-```
-
-Response example:
-
-```
-HTTP/1.1 200
-{
-    "status": "ok"
-}
-```
-
 #### POST /api/v1/channel/new
 
 **Post data:** Alarkhabil-ed25519-signed JSON
@@ -306,6 +256,68 @@ HTTP/1.1 200
     "lang": "<channel's language code>",
     "description_text": "<description markdown>",
     "description_html": "<description html>"
+}
+```
+
+#### POST /api/v1/channel/update
+
+**Post data:** Alarkhabil-ed25519-signed JSON
+
+**Response type:** JSON
+
+Will return **400 Bad Request** for invalid requests.
+
+Payload:
+
+```
+{
+    "command": "channel_update",
+    "uuid": "<channel's uuid>",
+    "handle": "<channel's new handle>",
+    "name": "<channel's new name>",
+    "lang": "<channel's new language code>",
+    "description_text": "<new description markdown>"
+}
+```
+
+Response example (same as `/api/v1/channel/info`):
+
+```
+HTTP/1.1 200
+{
+    "uuid": "<channel's uuid>",
+    "handle": "<channel's handle>",
+    "name": "<channel name>",
+    "created_at": <seconds since UNIX epoch (integer)>
+    "lang": "<channel's language code>",
+    "description_text": "<description markdown>",
+    "description_html": "<description html>"
+}
+```
+
+#### POST /api/v1/channel/delete
+
+**Post data:** Alarkhabil-ed25519-signed JSON
+
+**Response type:** JSON
+
+Will return **400 Bad Request** for invalid requests.
+
+Payload:
+
+```
+{
+    "command": "delete_channel",
+    "uuid": "<channel's uuid>"
+}
+```
+
+Response example:
+
+```
+HTTP/1.1 200
+{
+    "status": "ok"
 }
 ```
 
@@ -360,42 +372,6 @@ HTTP/1.1 200
 }
 ```
 
-#### POST /api/v1/channel/update
-
-**Post data:** Alarkhabil-ed25519-signed JSON
-
-**Response type:** JSON
-
-Will return **400 Bad Request** for invalid requests.
-
-Payload:
-
-```
-{
-    "command": "channel_update",
-    "uuid": "<channel's uuid>",
-    "handle": "<channel's new handle>",
-    "name": "<channel's new name>",
-    "lang": "<channel's new language code>",
-    "description_text": "<new description markdown>"
-}
-```
-
-Response example (same as `/api/v1/channel/info`):
-
-```
-HTTP/1.1 200
-{
-    "uuid": "<channel's uuid>",
-    "handle": "<channel's handle>",
-    "name": "<channel name>",
-    "created_at": <seconds since UNIX epoch (integer)>
-    "lang": "<channel's language code>",
-    "description_text": "<description markdown>",
-    "description_html": "<description html>"
-}
-```
-
 #### POST /api/v1/post/update
 
 **Post data:** Alarkhabil-ed25519-signed JSON
@@ -444,6 +420,32 @@ HTTP/1.1 200
         "<tag>",
         ...
     ]
+}
+```
+
+#### POST /api/v1/post/delete
+
+**Post data:** Alarkhabil-ed25519-signed JSON
+
+**Response type:** JSON
+
+Will return **400 Bad Request** for invalid requests.
+
+Payload:
+
+```
+{
+    "command": "delete_post",
+    "uuid": "<post's uuid>"
+}
+```
+
+Response example:
+
+```
+HTTP/1.1 200
+{
+    "status": "ok"
 }
 ```
 
