@@ -2,13 +2,8 @@
 use std::env;
 use std::net::SocketAddr;
 use std::str::FromStr;
-
 use std::collections::HashMap;
-
-use hyper::StatusCode;
 use std::sync::{Arc, Mutex};
-
-use std::future::Future;
 
 use serde::{Serialize, Deserialize};
 
@@ -17,7 +12,6 @@ use axum::{
     routing::{get, post},
     Router,
     Server,
-    http::header,
     response::IntoResponse,
     Json,
 };
@@ -26,6 +20,7 @@ use alarkhabil_server::crypto::{PrivateKey, SignedMessage};
 use alarkhabil_server::sys_time;
 use alarkhabil_server::base64;
 use alarkhabil_server::state::{PrimarySecret, AppState};
+use alarkhabil_server::error_reporting::{ErrorReporting, result_into_response};
 
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -52,46 +47,6 @@ impl Invite {
 struct MsgAccountNew {
     name: String,
     invite: String,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-enum ErrorReporting {
-    Html,
-    Json,
-}
-
-async fn handle_anyhow_error(err: anyhow::Error, reporting: ErrorReporting) -> impl IntoResponse {
-    log::error!("Error: {}", err);
-
-    if ErrorReporting::Json == reporting {
-        return (
-            StatusCode::BAD_REQUEST,
-            Json(serde_json::json!({
-                "status": "error",
-                "message": err.to_string(),
-            })),
-        ).into_response();
-    }
-
-    (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        [(header::CONTENT_TYPE, "text/html")],
-        "<!doctype html><html><head><title>Internal Server Error</title></head><body><h1>Internal Server Error</h1></body></html>",
-    ).into_response()
-}
-
-async fn result_into_response<T: IntoResponse, Fut: Future<Output = anyhow::Result<T>>>(
-    result: Fut,
-    error_reporting: ErrorReporting,
-) -> impl IntoResponse {
-    match result.await {
-        Ok(response) => {
-            response.into_response()
-        },
-        Err(e) => {
-            handle_anyhow_error(e, error_reporting).await.into_response()
-        }
-    }
 }
 
 async fn get_root(
