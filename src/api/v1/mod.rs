@@ -8,6 +8,8 @@ mod account_new;
 mod account_change_credentials;
 mod account_delete;
 
+mod admin_meta_update;
+mod admin_meta_delete;
 mod admin_author_delete;
 mod admin_channel_delete;
 mod admin_post_delete;
@@ -20,6 +22,8 @@ pub use account_new::api_account_new;
 pub use account_change_credentials::api_account_change_credentials;
 pub use account_delete::api_account_delete;
 
+pub use admin_meta_update::api_admin_meta_update;
+pub use admin_meta_delete::api_admin_meta_delete;
 pub use admin_author_delete::api_admin_author_delete;
 pub use admin_channel_delete::api_admin_channel_delete;
 pub use admin_post_delete::api_admin_post_delete;

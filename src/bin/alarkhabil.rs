@@ -99,6 +99,8 @@ async fn main() -> anyhow::Result<()> {
         .route("/api/v1/account/delete", post(api::v1::api_account_delete))
 
         // Admin v1
+        .route("/api/v1/admin/meta/update", post(api::v1::api_admin_meta_update))
+        .route("/api/v1/admin/meta/delete", post(api::v1::api_admin_meta_delete))
         .route("/api/v1/admin/author/delete", post(api::v1::api_admin_author_delete))
         .route("/api/v1/admin/channel/delete", post(api::v1::api_admin_channel_delete))
         .route("/api/v1/admin/post/delete", post(api::v1::api_admin_post_delete))
