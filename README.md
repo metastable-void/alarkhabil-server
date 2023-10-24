@@ -12,9 +12,9 @@ Web app for the independent thought publication platform.
 
 ### Tokens
 
-* Invite making token: hex-encoded string of random data. Can be used to create a new invite.
-* Admin token: hex-encoded string of random data. Can be used for administrative actions (e.g. deletion of users, etc.).
-* Invite token: base64-encoded string containing message signed by the server. Can be used for requesting a new account. Can be parsed freely to get the invited user's UUID.
+* __Invite making token__: hex-encoded string of random data. Can be used to create a new invite.
+* __Admin token__: hex-encoded string of random data. Can be used for administrative actions (e.g. deletion of users, etc.).
+* __Invite token__: base64-encoded string containing message signed by the server. Can be used for requesting a new account. Can be parsed freely to get the invited user's UUID.
 
 ### Admin endpoints v1
 
