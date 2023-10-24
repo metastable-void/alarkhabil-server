@@ -19,6 +19,10 @@ use alarkhabil_server::error_reporting::{ErrorReporting, result_into_response};
 use alarkhabil_server::api;
 
 
+// const
+static SQL_SCHEMA_SQLITE: &str = include_str!("../sql/schema-sqlite.sql");
+
+
 async fn get_root(
     State(state): State<Arc<AppState>>,
 ) -> impl IntoResponse {
@@ -39,6 +43,27 @@ async fn get_root(
     }, ErrorReporting::Html).await
 }
 
+async fn open_database(db_path: &str) -> Result<rusqlite::Connection, anyhow::Error> {
+    let conn = if db_path.is_empty() {
+        log::warn!("DB_PATH not set, using in-memory database");
+        rusqlite::Connection::open_in_memory()?
+    } else {
+        log::info!("Using database at {}", db_path);
+        rusqlite::Connection::open(&db_path)?
+    };
+    Ok(conn)
+}
+
+async fn initialize_primary_secret() -> PrimarySecret {
+    PrimarySecret::new(
+        env::var("PRIMARY_SECRET").unwrap_or_else(|_| {
+            log::warn!("PRIMARY_SECRET not set, using temporary random value");
+            let buf = rand::random::<[u8; 32]>();
+            hex::encode(buf)
+        })
+    )
+}
+
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     dotenvy::dotenv()?;
@@ -48,50 +73,43 @@ async fn main() -> anyhow::Result<()> {
     let addr_string = env::var("LISTEN_ADDR").unwrap_or("".to_string());
     let addr = SocketAddr::from_str(&addr_string).unwrap_or(SocketAddr::from(([127, 0, 0, 1], 8080)));
 
-    log::debug!("Bind address: {}", addr);
-
     // SQLite path
     let db_path: String = env::var("DB_PATH").unwrap_or("".to_string());
 
     // initialize DB
-    let mut db_connection = if db_path.is_empty() {
-        log::warn!("DB_PATH not set, using in-memory database");
-        rusqlite::Connection::open_in_memory()?
-    } else {
-        log::info!("Using database at {}", db_path);
-        rusqlite::Connection::open(&db_path)?
-    };
+    let mut db_connection = open_database(&db_path).await?;
     {
-        let init_query = include_str!("../sql/schema-sqlite.sql");
         let init_tx = db_connection.transaction()?;
-        init_tx.execute_batch(init_query)?;
+        init_tx.execute_batch(SQL_SCHEMA_SQLITE)?;
         init_tx.commit()?;
     }
 
-    // run the server
+    // initialize state
+    let primary_secret = initialize_primary_secret().await;
     let state = Arc::new(AppState {
         db_connection: Mutex::new(db_connection),
-        primary_secret: PrimarySecret::new(
-            env::var("PRIMARY_SECRET").unwrap_or_else(|_| {
-                log::warn!("PRIMARY_SECRET not set, using temporary random value");
-                let buf = rand::random::<[u8; 32]>();
-                hex::encode(buf)
-            })
-        ),
+        primary_secret: primary_secret,
     });
 
-    let new_invite_token = state.primary_secret.derive_secret("new_invite_token");
-
+    // define routes
     let app = Router::new()
         .route("/", get(get_root))
         .route("/api/v1/invite/new", get(api::v1::api_invite_new))
         .route("/api/v1/account/new", post(api::v1::api_account_new))
         .with_state(state.clone());
 
+    // run server
     let server = Server::bind(&addr).serve(app.into_make_service());
 
     log::info!("Listening on http://{}", &addr);
+
+    // print tokens for admin
+    let primary_secret = &state.primary_secret;
+    let new_invite_token = primary_secret.derive_secret("new_invite_token");
+    let admin_token = primary_secret.derive_secret("admin_token");
+
     println!("New invite tokens available at: http://{}/api/v1/invite/new?token={}", &addr, hex::encode(new_invite_token));
+    println!("Admin token: {}", hex::encode(admin_token));
 
     server.await?;
 
