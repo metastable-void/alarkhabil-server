@@ -4,13 +4,14 @@ use std::net::SocketAddr;
 use std::str::FromStr;
 use std::sync::{Arc, Mutex};
 
-use hyper::StatusCode;
+use hyper::{Request, StatusCode};
 use axum::{
     routing::{get, post},
     Router,
     Server,
-    response::{IntoResponse, Redirect},
+    response::{IntoResponse, Redirect, Response},
     Json,
+    middleware::Next,
 };
 
 use alarkhabil_server::state::{PrimarySecret, AppState};
@@ -21,6 +22,8 @@ use alarkhabil_server::api;
 // const
 static SQL_SCHEMA_SQLITE: &str = include_str!("../sql/schema-sqlite.sql");
 static URL_GITHUB: &str = "https://github.com/metastable-void/alarkhabil-server";
+static RESPONSE_HEADER_CSP: &str = "default-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none';";
+static RESPONSE_HEADER_ACCESS_CONTROL_ALLOW_ORIGIN: &str = "*";
 
 
 async fn handler_root() -> impl IntoResponse {
@@ -35,6 +38,14 @@ async fn handler_404() -> impl IntoResponse {
             "message": "Not found",
         })),
     )
+}
+
+async fn add_global_headers<B>(req: Request<B>, next: Next<B>) -> Response {
+    let mut res = next.run(req).await;
+    let headers = res.headers_mut();
+    headers.append("content-security-policy", RESPONSE_HEADER_CSP.parse().unwrap());
+    headers.append("access-control-allow-origin", RESPONSE_HEADER_ACCESS_CONTROL_ALLOW_ORIGIN.parse().unwrap());
+    res
 }
 
 async fn open_database(db_path: &str) -> Result<rusqlite::Connection, anyhow::Error> {
@@ -94,6 +105,8 @@ async fn main() -> anyhow::Result<()> {
 
         // 404 page
         .fallback(handler_404)
+
+        .layer(axum::middleware::from_fn(add_global_headers))
 
         // Set state
         .with_state(state.clone());
