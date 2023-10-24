@@ -28,6 +28,23 @@ pub struct SignedMessage {
 }
 
 impl SignedMessage {
+    pub fn try_new(algo: &str, public_key: &[u8], signature: &[u8], message: &[u8]) -> Result<SignedMessage, anyhow::Error> {
+        if algo == "hmac-sha256" && public_key.len() != 0 {
+            return Err(anyhow::anyhow!("You must not provide public key for HMAC: {}", algo));
+        }
+
+        if algo != "hmac-sha256" && algo != "ed25519" {
+            return Err(anyhow::anyhow!("Unsupported algorithm: {}", algo));
+        }
+
+        Ok(SignedMessage {
+            algo: algo.to_string(),
+            pubk: public_key.to_vec(),
+            sig: signature.to_vec(),
+            msg: message.to_vec(),
+        })
+    }
+
     pub fn create(secret_key: PrivateKey, msg: &[u8]) -> Result<SignedMessage, anyhow::Error> {
         let algo = secret_key.algo();
         let secret_key = secret_key.key();
