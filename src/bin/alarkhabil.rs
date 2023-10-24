@@ -204,7 +204,7 @@ async fn main() -> anyhow::Result<()> {
         rusqlite::Connection::open(&db_path)?
     };
     {
-        let init_query = include_str!("./sql/schema-sqlite.sql");
+        let init_query = include_str!("../sql/schema-sqlite.sql");
         let init_tx = db_connection.transaction()?;
         init_tx.execute_batch(init_query)?;
         init_tx.commit()?;

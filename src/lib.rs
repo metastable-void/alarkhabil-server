@@ -2,6 +2,7 @@
 pub mod base64;
 pub mod sys_time;
 pub mod state;
+pub mod api;
 
 use ed25519_dalek::{SigningKey, VerifyingKey, Signature, Signer};
 use serde::{Serialize, Deserialize};
