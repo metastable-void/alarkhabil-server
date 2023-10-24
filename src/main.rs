@@ -25,7 +25,8 @@ use sha2::Sha256;
 use hmac::{Hmac, Mac};
 use base64::{Engine, engine::general_purpose::STANDARD as base64_engine};
 
-use alarkhabil_server::{PrivateKey, SignedMessage, NewInviteResult, get_sys_time_in_secs};
+use alarkhabil_server::{PrivateKey, SignedMessage, NewInviteResult};
+use alarkhabil_server::sys_time;
 
 
 type HmacSha256 = Hmac<Sha256>;
@@ -185,7 +186,7 @@ async fn api_account_new(
         }
 
         let name = &msg.name;
-        let now = get_sys_time_in_secs();
+        let now = sys_time::get_sys_time_in_secs();
 
         trx.execute("INSERT INTO author (uuid, name, registered_date) VALUES (?, ?, ?)", (uuid, name, now))?;
         let author_id = trx.query_row("SELECT id FROM author WHERE uuid = ?", [uuid], |row| row.get::<_, u32>(0))?;

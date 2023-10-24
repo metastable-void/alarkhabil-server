@@ -1,4 +1,7 @@
 
+pub mod base64;
+pub mod sys_time;
+
 use ed25519_dalek::{SigningKey, VerifyingKey, Signature, Signer};
 use serde::{Serialize, Deserialize};
 
@@ -10,7 +13,6 @@ use generic_array::GenericArray;
 
 // Create alias for HMAC-SHA256
 type HmacSha256 = Hmac<Sha256>;
-use std::time::SystemTime;
 
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -136,6 +138,10 @@ impl SignedMessage {
             return Err(anyhow::anyhow!("Unsupported algorithm: {}", self.algo));
         }
 
+        if secret_key.algo != "hmac-sha256" {
+            return Err(anyhow::anyhow!("Unsupported algorithm: {}", secret_key.algo));
+        }
+
         let secret_key = secret_key.key();
 
         let mut hmac = HmacSha256::new_from_slice(secret_key).unwrap();
@@ -155,33 +161,5 @@ impl SignedMessage {
         }
 
         Ok(&self.pubk)
-    }
-}
-
-mod base64 {
-    use serde::{Serialize, Deserialize};
-    use serde::{Deserializer, Serializer};
-    use base64::{Engine, engine::general_purpose::STANDARD as base64_engine};
-
-    pub fn serialize<S: Serializer>(v: &Vec<u8>, s: S) -> Result<S::Ok, S::Error> {
-        let base64 = base64_engine.encode(v);
-        String::serialize(&base64, s)
-    }
-    
-    pub fn deserialize<'de, D: Deserializer<'de>>(d: D) -> Result<Vec<u8>, D::Error> {
-        let base64 = String::deserialize(d)?;
-        base64_engine.decode(base64.as_bytes())
-            .map_err(|e| serde::de::Error::custom(e))
-    }
-}
-
-pub fn extract_ed25519_private_key(buf: &[u8]) -> Result<[u8; 32], anyhow::Error> {
-    buf.try_into().map_err(|_| anyhow::anyhow!("Invalid length"))
-}
-
-pub fn get_sys_time_in_secs() -> u64 {
-    match SystemTime::now().duration_since(SystemTime::UNIX_EPOCH) {
-        Ok(n) => n.as_secs(),
-        Err(_) => panic!("SystemTime before UNIX EPOCH!"),
     }
 }
