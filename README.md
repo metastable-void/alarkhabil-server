@@ -10,15 +10,21 @@ Web app for the independent thought publication platform.
 * File uploads/user icons are not supported in the first release, but will be supported in future releases.
 * API pagination is not supported first. Dangerous queries are limited to 1000 entries.
 
+### Tokens
+
+* Invite making token: hex-encoded string of random data. Can be used to create a new invite.
+* Admin token: hex-encoded string of random data. Can be used for administrative actions (e.g. deletion of users, etc.).
+* Invite token: base64-encoded string containing message signed by the server. Can be used for requesting a new account. Can be parsed freely to get the invited user's UUID.
+
 ### Admin endpoints v1
 
 #### GET /api/v1/invite/new
 
-The administrator would have access to their *new invite token*.
+The administrator would have access to their *invite making token*.
 
-The administrator uses the *new invite token* to make a request of this type, and they will get an invite token in base64, which they can tell someone.
+The administrator uses the *invite making token* to make a request of this type, and they will get an invite token in base64, which they can tell someone.
 
-**Query format:** `?token={new invite token}`
+**Query format:** `?token={invite making token}`
 
 **Response type:** JSON
 

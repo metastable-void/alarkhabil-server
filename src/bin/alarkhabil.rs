@@ -54,16 +54,6 @@ async fn open_database(db_path: &str) -> Result<rusqlite::Connection, anyhow::Er
     Ok(conn)
 }
 
-async fn initialize_primary_secret() -> PrimarySecret {
-    PrimarySecret::new(
-        env::var("PRIMARY_SECRET").unwrap_or_else(|_| {
-            log::warn!("PRIMARY_SECRET not set, using temporary random value");
-            let buf = rand::random::<[u8; 32]>();
-            hex::encode(buf)
-        })
-    )
-}
-
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     dotenvy::dotenv()?;
@@ -85,7 +75,7 @@ async fn main() -> anyhow::Result<()> {
     }
 
     // initialize state
-    let primary_secret = initialize_primary_secret().await;
+    let primary_secret = PrimarySecret::new_from_env();
     let state = Arc::new(AppState {
         db_connection: Mutex::new(db_connection),
         primary_secret: primary_secret,
@@ -105,10 +95,10 @@ async fn main() -> anyhow::Result<()> {
 
     // print tokens for admin
     let primary_secret = &state.primary_secret;
-    let new_invite_token = primary_secret.derive_secret("new_invite_token");
+    let invite_making_token = primary_secret.derive_secret("invite_making_token");
     let admin_token = primary_secret.derive_secret("admin_token");
 
-    println!("New invite tokens available at: http://{}/api/v1/invite/new?token={}", &addr, hex::encode(new_invite_token));
+    println!("Invite making token: {}", hex::encode(invite_making_token));
     println!("Admin token: {}", hex::encode(admin_token));
 
     server.await?;

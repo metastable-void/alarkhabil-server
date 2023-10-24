@@ -51,10 +51,10 @@ pub async fn api_invite_new(
     Query(params): Query<HashMap<String, String>>,
 ) -> impl IntoResponse {
     result_into_response(async move {
-        let invite_token = state.primary_secret.derive_secret("new_invite_token");
+        let invite_making_token = state.primary_secret.derive_secret("invite_making_token");
         let token = hex::decode(params.get("token").ok_or_else(|| anyhow::anyhow!("Missing token parameter"))?)?;
 
-        if invite_token != token {
+        if invite_making_token != token {
             return Err(anyhow::anyhow!("Invalid token"));
         }
 
@@ -63,9 +63,11 @@ pub async fn api_invite_new(
         let msg = Invite::new();
         let msg = SignedMessage::create(PrivateKey::from_bytes("hmac-sha256", &signing_key)?, serde_json::to_string(&msg)?.as_bytes())?;
 
+        let invite_token = base64::encode(serde_json::to_string(&msg)?.as_bytes());
+
         Ok(Json(serde_json::json!({
             "status": "ok",
-            "invite": base64::encode(serde_json::to_string(&msg)?.as_bytes()),
+            "invite": invite_token,
         })))
     }, ErrorReporting::Json).await
 }

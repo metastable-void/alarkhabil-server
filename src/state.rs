@@ -1,4 +1,5 @@
 
+use std::env;
 use std::sync::Mutex;
 
 use sha2::Sha256;
@@ -17,6 +18,34 @@ impl PrimarySecret {
         PrimarySecret {
             secret,
         }
+    }
+
+    pub fn new_random() -> PrimarySecret {
+        let buf = rand::random::<[u8; 32]>();
+        
+        PrimarySecret {
+            secret: hex::encode(buf),
+        }
+    }
+
+    pub fn new_from_env() -> PrimarySecret {
+        let env = env::var("PRIMARY_SECRET").unwrap_or_else(|_| {
+            log::warn!("PRIMARY_SECRET not set, using temporary random value");
+            let buf = rand::random::<[u8; 32]>();
+            hex::encode(buf)
+        });
+
+        let env = if env.is_empty() {
+            log::warn!("PRIMARY_SECRET is empty, using temporary random value");
+            let buf = rand::random::<[u8; 32]>();
+            hex::encode(buf)
+        } else {
+            env
+        };
+
+        PrimarySecret::new(
+            env
+        )
     }
 
     pub fn derive_secret(&self, name: &str) -> Vec<u8> {
