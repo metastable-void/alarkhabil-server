@@ -741,6 +741,19 @@ HTTP/1.1 404
 }
 ```
 
+## Build
+
+```
+cargo build
+```
+
+## Configuration
+
+```
+cp ./example.env ./.env
+# edit ./.env
+```
+
 ## License
 
 Licensed under the Apache 2.0 license.
