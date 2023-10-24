@@ -84,11 +84,20 @@ async fn main() -> anyhow::Result<()> {
     // define routes
     let app = Router::new()
         .route("/", get(get_root))
+
+        // Invites v1
         .route("/api/v1/invite/new", get(api::v1::api_invite_new))
+
+        // Accounts v1
         .route("/api/v1/account/new", post(api::v1::api_account_new))
+        .route("/api/v1/account/delete", post(api::v1::api_account_delete))
+
+        // Admin v1
         .route("/api/v1/admin/author/delete", post(api::v1::api_admin_author_delete))
         .route("/api/v1/admin/channel/delete", post(api::v1::api_admin_channel_delete))
         .route("/api/v1/admin/post/delete", post(api::v1::api_admin_post_delete))
+
+        // Set state
         .with_state(state.clone());
 
     // run server

@@ -134,7 +134,7 @@ HTTP/1.1 200
 }
 ```
 
-### Admin endpoints v1
+### Admin v1
 
 #### POST /api/v1/admin/author/delete
 

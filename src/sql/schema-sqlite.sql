@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS `author_public_key` (
   id INTEGER PRIMARY KEY,
   author_id INTEGER NOT NULL,
   type BLOB NOT NULL,
-  public_key BLOB NOT NULL,
+  public_key BLOB UNIQUE NOT NULL,
   FOREIGN KEY(author_id) REFERENCES author(id) ON DELETE CASCADE
 );
 
