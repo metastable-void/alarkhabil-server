@@ -86,6 +86,7 @@ async fn main() -> anyhow::Result<()> {
         .route("/", get(get_root))
         .route("/api/v1/invite/new", get(api::v1::api_invite_new))
         .route("/api/v1/account/new", post(api::v1::api_account_new))
+        .route("/api/v1/admin/author/delete", post(api::v1::api_admin_author_delete))
         .with_state(state.clone());
 
     // run server
