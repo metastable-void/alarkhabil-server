@@ -29,6 +29,7 @@ Response:
 ```
 HTTP/1.1 200
 {
+    "status": "ok",
     "invite": "<invite token string (base64)>"
 }
 ```

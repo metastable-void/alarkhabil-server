@@ -22,11 +22,9 @@ use axum::{
     Json,
 };
 
-use base64::{Engine, engine::general_purpose::STANDARD as base64_engine};
-
 use alarkhabil_server::crypto::{PrivateKey, SignedMessage};
-use alarkhabil_server::NewInviteResult;
 use alarkhabil_server::sys_time;
+use alarkhabil_server::base64;
 use alarkhabil_server::state::{PrimarySecret, AppState};
 
 
@@ -132,11 +130,11 @@ async fn api_invite_new(
 
         let msg = Invite::new();
         let msg = SignedMessage::create(PrivateKey::from_bytes("hmac-sha256", &signing_key)?, serde_json::to_string(&msg)?.as_bytes())?;
-        let msg = NewInviteResult {
-            invite: serde_json::to_string(&msg)?.as_bytes().to_vec(),
-        };
 
-        Ok(Json(msg))
+        Ok(Json(serde_json::json!({
+            "status": "ok",
+            "invite": base64::encode(serde_json::to_string(&msg)?.as_bytes()),
+        })))
     }, ErrorReporting::Json).await
 }
 
@@ -148,7 +146,7 @@ async fn api_account_new(
         let public_key = msg.public_key()?.to_owned();
         let msg = msg.verify()?;
         let msg = serde_json::from_slice::<MsgAccountNew>(&msg)?;
-        let invite = base64_engine.decode(&msg.invite)?;
+        let invite = base64::decode(&msg.invite)?;
         let signing_key = state.primary_secret.derive_secret("signing_key");
         let invite: SignedMessage = serde_json::from_slice(&invite)?;
 
