@@ -1,6 +1,6 @@
 # Al Arkhabil API server
 
-Backend API server for the independent thought publication platform.
+Backend API server for Al Arkhabil, the independent thought publication platform.
 
 ## About this API
 
