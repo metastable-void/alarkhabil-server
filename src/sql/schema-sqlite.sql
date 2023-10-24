@@ -127,3 +127,14 @@ CREATE UNIQUE INDEX IF NOT EXISTS `index_post_tag` ON `post_tag` (
   id,
   name
 );
+
+CREATE TABLE IF NOT EXISTS `meta_page` (
+  id INTEGER PRIMARY KEY,
+  page_name BLOB UNIQUE NOT NULL,
+  title BLOB NOT NULL,
+  page_text BLOB NOT NULL DEFAULT ''
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS `index_meta_page_page_name` ON `meta_page` (
+  page_name
+);

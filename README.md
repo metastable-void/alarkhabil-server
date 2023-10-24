@@ -136,6 +136,58 @@ HTTP/1.1 200
 
 ## Admin v1
 
+### POST /api/v1/admin/meta/update
+
+Creates or updates a meta page.
+
+**Query format:** `?token={admin token}`
+
+**Post data:** JSON
+
+**Response type:** JSON
+
+Will return **400 Bad Request** for invalid requests.
+
+Request:
+
+```
+{
+    "page_name": "<name of meta page (part of url)>",
+    "title": "<title of meta page>",
+    "text": "<markdown text of meta page>"
+}
+```
+
+Response:
+
+```
+HTTP/1.1 200
+{
+    "status": "ok"
+}
+```
+
+### POST /api/v1/admin/meta/delete
+
+Deletes a meta page. This is irreversible.
+
+**Query format:** `?token={admin token}&page_name={page name}`
+
+**Post data:** none
+
+**Response type:** JSON
+
+Will return **400 Bad Request** for invalid requests.
+
+Response:
+
+```
+HTTP/1.1 200
+{
+    "status": "ok"
+}
+```
+
 ### POST /api/v1/admin/author/delete
 
 **Query format:** `?token={admin token}&uuid={author's uuid}`
