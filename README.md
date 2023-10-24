@@ -1,8 +1,8 @@
-# Al Arkhabil server software
+# Al Arkhabil API server
 
-Web app for the independent thought publication platform.
+API (backend) server for the independent thought publication platform.
 
-## API documentation
+## About this API
 
 * Strings are always in UTF-8.
 * Maximum post size in Markdown is 100kB.
@@ -16,9 +16,9 @@ Web app for the independent thought publication platform.
 * __Admin token__: hex-encoded string of random data. Can be used for administrative actions (e.g. deletion of users, etc.).
 * __Invite token__: base64-encoded string containing message signed by the server. Can be used for requesting a new account. Can be parsed freely to get the invited user's UUID.
 
-### Invites v1
+## Invites v1
 
-#### GET /api/v1/invite/new
+### GET /api/v1/invite/new
 
 The administrator would have access to their *invite making token*.
 
@@ -42,9 +42,9 @@ HTTP/1.1 200
 }
 ```
 
-### Accounts v1
+## Accounts v1
 
-#### POST /api/v1/account/new
+### POST /api/v1/account/new
 
 The user who wants to create an account, creates an ed25519 key pair and signs the folowing payload with the private key.
 
@@ -79,7 +79,7 @@ HTTP/1.1 200
 }
 ```
 
-#### POST /api/v1/account/change_credentials
+### POST /api/v1/account/change_credentials
 
 **Post data:** Alarkhabil-ed25519-signed JSON
 
@@ -107,7 +107,7 @@ HTTP/1.1 200
 }
 ```
 
-#### POST /api/v1/account/delete
+### POST /api/v1/account/delete
 
 **TODO: Is this really needed?**
 
@@ -134,9 +134,9 @@ HTTP/1.1 200
 }
 ```
 
-### Admin v1
+## Admin v1
 
-#### POST /api/v1/admin/author/delete
+### POST /api/v1/admin/author/delete
 
 **Query format:** `?token={admin token}&uuid={author's uuid}`
 
@@ -155,7 +155,7 @@ HTTP/1.1 200
 }
 ```
 
-#### POST /api/v1/admin/channel/delete
+### POST /api/v1/admin/channel/delete
 
 **Query format:** `?token={admin token}&uuid={channel's uuid}`
 
@@ -174,7 +174,7 @@ HTTP/1.1 200
 }
 ```
 
-#### POST /api/v1/admin/post/delete
+### POST /api/v1/admin/post/delete
 
 **Query format:** `?token={admin token}&uuid={post's uuid}`
 
@@ -193,9 +193,9 @@ HTTP/1.1 200
 }
 ```
 
-### Authors' endpoints v1
+## Authors' endpoints v1
 
-#### POST /api/v1/self/update
+### POST /api/v1/self/update
 
 **Post data:** Alarkhabil-ed25519-signed JSON
 
@@ -226,7 +226,7 @@ HTTP/1.1 200
 }
 ```
 
-#### POST /api/v1/channel/new
+### POST /api/v1/channel/new
 
 **Post data:** Alarkhabil-ed25519-signed JSON
 
@@ -260,7 +260,7 @@ HTTP/1.1 200
 }
 ```
 
-#### POST /api/v1/channel/update
+### POST /api/v1/channel/update
 
 **Post data:** Alarkhabil-ed25519-signed JSON
 
@@ -296,7 +296,7 @@ HTTP/1.1 200
 }
 ```
 
-#### POST /api/v1/channel/delete
+### POST /api/v1/channel/delete
 
 **Post data:** Alarkhabil-ed25519-signed JSON
 
@@ -322,7 +322,7 @@ HTTP/1.1 200
 }
 ```
 
-#### POST /api/v1/post/new
+### POST /api/v1/post/new
 
 **Post data:** Alarkhabil-ed25519-signed JSON
 
@@ -373,7 +373,7 @@ HTTP/1.1 200
 }
 ```
 
-#### POST /api/v1/post/update
+### POST /api/v1/post/update
 
 **Post data:** Alarkhabil-ed25519-signed JSON
 
@@ -424,7 +424,7 @@ HTTP/1.1 200
 }
 ```
 
-#### POST /api/v1/post/delete
+### POST /api/v1/post/delete
 
 **Post data:** Alarkhabil-ed25519-signed JSON
 
@@ -450,9 +450,9 @@ HTTP/1.1 200
 }
 ```
 
-### Public endpoints v1
+## Public endpoints v1
 
-#### GET /api/v1/author/info
+### GET /api/v1/author/info
 
 **Query format:** `?uuid={author uuid}`
 
@@ -480,7 +480,7 @@ HTTP/1.1 404
 }
 ```
 
-#### GET /api/v1/author/channels
+### GET /api/v1/author/channels
 
 **Query format:** `?uuid={author uuid}`
 
@@ -511,7 +511,7 @@ HTTP/1.1 404
 }
 ```
 
-#### GET /api/v1/author/posts
+### GET /api/v1/author/posts
 
 **Query format:** `?uuid={author uuid}`
 
@@ -548,7 +548,7 @@ HTTP/1.1 404
 }
 ```
 
-#### GET /api/v1/channel/info
+### GET /api/v1/channel/info
 
 **Query format:** `?uuid={channel uuid}`
 
@@ -580,7 +580,7 @@ HTTP/1.1 404
 }
 ```
 
-#### GET /api/v1/channel/authors
+### GET /api/v1/channel/authors
 
 **Query format:** `?uuid={channel uuid}`
 
@@ -608,7 +608,7 @@ HTTP/1.1 404
 }
 ```
 
-#### GET /api/v1/channel/posts
+### GET /api/v1/channel/posts
 
 **Query format:** `?uuid={channel uuid}`
 
@@ -644,7 +644,7 @@ HTTP/1.1 404
 }
 ```
 
-#### GET /api/v1/post/info
+### GET /api/v1/post/info
 
 **Query format:** `?uuid={post uuid}`
 

@@ -4,43 +4,37 @@ use std::net::SocketAddr;
 use std::str::FromStr;
 use std::sync::{Arc, Mutex};
 
+use hyper::StatusCode;
 use axum::{
-    extract::State,
     routing::{get, post},
     Router,
     Server,
-    response::IntoResponse,
+    response::{IntoResponse, Redirect},
+    Json,
 };
 
-use alarkhabil_server::crypto::{PrivateKey, SignedMessage};
 use alarkhabil_server::state::{PrimarySecret, AppState};
-use alarkhabil_server::error_reporting::{ErrorReporting, result_into_response};
 
 use alarkhabil_server::api;
 
 
 // const
 static SQL_SCHEMA_SQLITE: &str = include_str!("../sql/schema-sqlite.sql");
+static URL_GITHUB: &str = "https://github.com/metastable-void/alarkhabil-server";
 
 
-async fn get_root(
-    State(state): State<Arc<AppState>>,
-) -> impl IntoResponse {
-    result_into_response(async move {
-        let author_count: u32 = {
-            let db_connection = state.db_connection.lock().unwrap();
-            db_connection.query_row("SELECT COUNT(*) FROM author", [], |row| {
-                row.get(0)
-            })?
-        };
-    
-        let secret_key = PrivateKey::new("ed25519")?;
-        let msg = b"Hello, world!";
-        let signed_msg = SignedMessage::create(secret_key, msg)?;
-        signed_msg.verify()?;
-    
-        Ok(format!("Hello, world! {} authors", author_count))
-    }, ErrorReporting::Html).await
+async fn handler_root() -> impl IntoResponse {
+    Redirect::to(URL_GITHUB)
+}
+
+async fn handler_404() -> impl IntoResponse {
+    (
+        StatusCode::NOT_FOUND,
+        Json(serde_json::json!({
+            "status": "error",
+            "message": "Not found",
+        })),
+    )
 }
 
 async fn open_database(db_path: &str) -> Result<rusqlite::Connection, anyhow::Error> {
@@ -83,7 +77,7 @@ async fn main() -> anyhow::Result<()> {
 
     // define routes
     let app = Router::new()
-        .route("/", get(get_root))
+        .route("/", get(handler_root))
 
         // Invites v1
         .route("/api/v1/invite/new", get(api::v1::api_invite_new))
@@ -97,6 +91,9 @@ async fn main() -> anyhow::Result<()> {
         .route("/api/v1/admin/author/delete", post(api::v1::api_admin_author_delete))
         .route("/api/v1/admin/channel/delete", post(api::v1::api_admin_channel_delete))
         .route("/api/v1/admin/post/delete", post(api::v1::api_admin_post_delete))
+
+        // 404 page
+        .fallback(handler_404)
 
         // Set state
         .with_state(state.clone());
