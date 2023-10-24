@@ -66,7 +66,7 @@ async fn main() -> anyhow::Result<()> {
 
     // bind address
     let addr_string = env::var("LISTEN_ADDR").unwrap_or("".to_string());
-    let addr = SocketAddr::from_str(&addr_string).unwrap_or(SocketAddr::from(([127, 0, 0, 1], 8080)));
+    let addr = SocketAddr::from_str(&addr_string).unwrap_or(SocketAddr::from(([127, 0, 0, 1], 7781)));
 
     // SQLite path
     let db_path: String = env::var("DB_PATH").unwrap_or("".to_string());
