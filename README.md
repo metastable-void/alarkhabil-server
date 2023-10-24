@@ -16,7 +16,7 @@ Web app for the independent thought publication platform.
 * __Admin token__: hex-encoded string of random data. Can be used for administrative actions (e.g. deletion of users, etc.).
 * __Invite token__: base64-encoded string containing message signed by the server. Can be used for requesting a new account. Can be parsed freely to get the invited user's UUID.
 
-### Admin endpoints v1
+### Invites v1
 
 #### GET /api/v1/invite/new
 
@@ -39,6 +39,44 @@ HTTP/1.1 200
     "invite": "<invite token string (base64)>"
 }
 ```
+
+### Accounts v1
+
+#### POST /api/v1/account/new
+
+The user who wants to create an account, creates an ed25519 key pair and signs the folowing payload with the private key.
+
+The payload contains the new account's name and an invite token from `GET /api/v1/invite/new`.
+The signed message contains the user's ed25519 public key.
+
+The response will contain the new account's UUID.
+
+**Post data:** Alarkhabil-ed25519-signed JSON
+
+**Response type:** JSON
+
+Will return **400 Bad Request** for invalid requests.
+
+Payload:
+
+```
+{
+    "name": "<name>",
+    "invite": "<invite token string (base64)>"
+}
+```
+
+Response example:
+
+```
+HTTP/1.1 200
+{
+    "status": "ok",
+    "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+}
+```
+
+### Admin endpoints v1
 
 #### POST /api/v1/admin/author/delete
 
@@ -94,42 +132,6 @@ Response:
 HTTP/1.1 200
 {
     "status": "ok"
-}
-```
-
-### Accounts v1
-
-#### POST /api/v1/account/new
-
-The user who wants to create an account, creates an ed25519 key pair and signs the folowing payload with the private key.
-
-The payload contains the new account's name and an invite token from `GET /api/v1/invite/new`.
-The signed message contains the user's ed25519 public key.
-
-The response will contain the new account's UUID.
-
-**Post data:** Alarkhabil-ed25519-signed JSON
-
-**Response type:** JSON
-
-Will return **400 Bad Request** for invalid requests.
-
-Payload:
-
-```
-{
-    "name": "<name>",
-    "invite": "<invite token string (base64)>"
-}
-```
-
-Response example:
-
-```
-HTTP/1.1 200
-{
-    "status": "ok",
-    "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 }
 ```
 
