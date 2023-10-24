@@ -1,6 +1,6 @@
 # Al Arkhabil API server
 
-API (backend) server for the independent thought publication platform.
+Backend API server for the independent thought publication platform.
 
 ## About this API
 
@@ -738,3 +738,11 @@ HTTP/1.1 404
     "status": "not found"
 }
 ```
+
+## License
+
+Licensed under the Apache 2.0 license.
+
+### Authors
+
+- [@metastable-void](https://github.com/metastable-void)
