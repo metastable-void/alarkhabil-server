@@ -308,7 +308,7 @@ Payload:
 
 ```
 {
-    "command": "delete_channel",
+    "command": "channel_delete",
     "uuid": "<channel's uuid>"
 }
 ```
@@ -436,7 +436,7 @@ Payload:
 
 ```
 {
-    "command": "delete_post",
+    "command": "post_delete",
     "uuid": "<post's uuid>"
 }
 ```
