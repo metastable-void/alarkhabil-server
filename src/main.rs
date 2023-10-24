@@ -1,3 +1,4 @@
+
 use std::env;
 use std::net::SocketAddr;
 use std::str::FromStr;
@@ -21,28 +22,12 @@ use axum::{
     Json,
 };
 
-use sha2::Sha256;
-use hmac::{Hmac, Mac};
 use base64::{Engine, engine::general_purpose::STANDARD as base64_engine};
 
 use alarkhabil_server::{PrivateKey, SignedMessage, NewInviteResult};
 use alarkhabil_server::sys_time;
+use alarkhabil_server::state::{PrimarySecret, AppState};
 
-
-type HmacSha256 = Hmac<Sha256>;
-
-#[derive(Debug, Clone)]
-struct PrimarySecret {
-    secret: String,
-}
-
-impl PrimarySecret {
-    fn derive_secret(&self, name: &str) -> Vec<u8> {
-        let mut hmac = HmacSha256::new_from_slice(self.secret.as_bytes()).unwrap();
-        hmac.update(name.as_bytes());
-        hmac.finalize().into_bytes().to_vec()
-    }
-}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct Invite {
@@ -68,12 +53,6 @@ impl Invite {
 struct MsgAccountNew {
     name: String,
     invite: String,
-}
-
-#[derive(Debug)]
-struct AppState {
-    db_connection: Mutex<rusqlite::Connection>,
-    primary_secret: PrimarySecret,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -234,13 +213,13 @@ async fn main() -> anyhow::Result<()> {
     // run the server
     let state = Arc::new(AppState {
         db_connection: Mutex::new(db_connection),
-        primary_secret: PrimarySecret {
-            secret: env::var("PRIMARY_SECRET").unwrap_or_else(|_| {
+        primary_secret: PrimarySecret::new(
+            env::var("PRIMARY_SECRET").unwrap_or_else(|_| {
                 log::warn!("PRIMARY_SECRET not set, using temporary random value");
                 let buf = rand::random::<[u8; 32]>();
                 hex::encode(buf)
-            }),
-        },
+            })
+        ),
     });
 
     let new_invite_token = state.primary_secret.derive_secret("new_invite_token");
