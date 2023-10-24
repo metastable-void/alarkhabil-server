@@ -2,6 +2,7 @@
 use std::sync::Arc;
 
 use serde::{Serialize, Deserialize};
+use monostate::MustBe;
 
 use axum::{
     extract::State,
@@ -19,6 +20,7 @@ use crate::api::v1::types::Invite;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct MsgAccountNew {
+    command: MustBe!("account_new"),
     name: String,
     invite: String,
 }

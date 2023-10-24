@@ -63,6 +63,7 @@ Payload:
 
 ```
 {
+    "command": "account_new",
     "name": "<name>",
     "invite": "<invite token string (base64)>"
 }
@@ -120,7 +121,7 @@ Payload:
 
 ```
 {
-    "command": "delete_account"
+    "command": "account_delete"
 }
 ```
 
