@@ -113,6 +113,7 @@ async fn main() -> anyhow::Result<()> {
 
         // Public endpoints v1
         .route("/api/v1/meta/info", get(api::v1::api_meta_info))
+        .route("/api/v1/meta/list", get(api::v1::api_meta_list))
 
         // 404 page
         .fallback(handler_404)

@@ -20,6 +20,7 @@ mod channel_update;
 mod channel_delete;
 
 mod meta_info;
+mod meta_list;
 
 
 // API handlers
@@ -41,3 +42,4 @@ pub use channel_update::api_channel_update;
 pub use channel_delete::api_channel_delete;
 
 pub use meta_info::api_meta_info;
+pub use meta_list::api_meta_list;
