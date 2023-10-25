@@ -24,6 +24,7 @@ mod post_delete;
 
 mod meta_info;
 mod meta_list;
+mod author_info;
 
 
 // API handlers
@@ -49,3 +50,4 @@ pub use post_delete::api_post_delete;
 
 pub use meta_info::api_meta_info;
 pub use meta_list::api_meta_list;
+pub use author_info::api_author_info;
