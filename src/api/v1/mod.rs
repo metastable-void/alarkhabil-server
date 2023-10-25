@@ -15,6 +15,7 @@ mod admin_channel_delete;
 mod admin_post_delete;
 
 mod self_update;
+mod channel_new;
 
 mod meta_info;
 
@@ -33,5 +34,6 @@ pub use admin_channel_delete::api_admin_channel_delete;
 pub use admin_post_delete::api_admin_post_delete;
 
 pub use self_update::api_self_update;
+pub use channel_new::api_channel_new;
 
 pub use meta_info::api_meta_info;
