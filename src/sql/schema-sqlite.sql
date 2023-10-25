@@ -132,6 +132,7 @@ CREATE TABLE IF NOT EXISTS `meta_page` (
   id INTEGER PRIMARY KEY,
   page_name BLOB UNIQUE NOT NULL,
   title BLOB NOT NULL,
+  updated_date INTEGER NOT NULL, -- seconds since UNIX epoch
   page_text BLOB NOT NULL DEFAULT ''
 );
 

@@ -506,6 +506,34 @@ HTTP/1.1 200
 
 ## Public endpoints v1
 
+### GET /api/v1/meta/info
+
+**Query format:** `?name={meta page name}`
+
+**Response type:** JSON
+
+Response (post found):
+
+```
+HTTP/1.1 200
+{
+    "page_name": "<name of meta page>",
+    "updated_date": "<revision date in seconds since UNIX epoch>",
+    "title": "<title>",
+    "text": "<page markdown text>",
+    "html": "<page html>"
+}
+```
+
+Response (post not found):
+
+```
+HTTP/1.1 404
+{
+    "status": "not found"
+}
+```
+
 ### GET /api/v1/author/info
 
 **Query format:** `?uuid={author uuid}`
