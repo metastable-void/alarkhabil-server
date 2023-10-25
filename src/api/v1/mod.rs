@@ -31,6 +31,7 @@ mod author_posts;
 mod channel_info;
 mod channel_list;
 mod channel_authors;
+mod channel_posts;
 
 
 // API handlers
@@ -63,3 +64,4 @@ pub use author_posts::api_author_posts;
 pub use channel_info::api_channel_info;
 pub use channel_list::api_channel_list;
 pub use channel_authors::api_channel_authors;
+pub use channel_posts::api_channel_posts;
