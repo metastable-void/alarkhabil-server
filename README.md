@@ -534,6 +534,26 @@ HTTP/1.1 404
 }
 ```
 
+### GET /api/v1/meta/list
+
+**Query format:** (none) - TODO: allow paging
+
+**Response type:** JSON
+
+Response:
+
+```
+HTTP/1.1 200
+[
+    {
+        "page_name": "<name of meta page>",
+        "updated_date": <revision date in seconds since UNIX epoch>,
+        "title": "<title>"
+    },
+    ...
+]
+```
+
 ### GET /api/v1/author/info
 
 **Query format:** `?uuid={author uuid}`
