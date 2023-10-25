@@ -46,6 +46,18 @@ POST | channel/delete | **Pubkey account auth** | NotDeleted(Account) && NotDele
 POST | post/new | **Pubkey account auth** | NotDeleted(Account) && NotDeleted(Channel) && Owns(Channel) | Signed JSON data (POST)
 POST | post/update | **Pubkey account auth** | NotDeleted(Account) && NotDeleted(Channel) && NotDeleted(Post) && Owns(Channel) | Signed JSON data (POST)
 POST | post/delete | **Pubkey account auth** | NotDeleted(Account) && NotDeleted(Channel) && NotDeleted(Post) && Owns(Channel) | Signed JSON data (POST)
+GET | meta/info | - | MetaPageExists(`page_name`) | Query: `page_name`
+GET | meta/list | - | - | -
+GET | author/info | - | NotDeleted(Author) | Query: `uuid`
+GET | author/list | - | NotDeleted(Author) | -
+GET | author/channels | - | NotDeleted(Author) && NotDeleted(Channel) | Query: `uuid`
+GET | author/posts | - | NotDeleted(Author) && NotDeleted(Channel) && NotDeleted(Post) | Query: `uuid`
+GET | channel/info | - | NotDeleted(Channel) | Query: `uuid` or `handle`
+GET | channel/list | - | NotDeleted(Channel) | -
+GET | channel/authors | - | NotDeleted(Channel) && NotDeleted(Author) | Query: `uuid`
+GET | channel/posts | - | NotDeleted(Channel) && NotDeleted(Post) | Query: `uuid`
+GET | post/info | - | NotDeleted(Post) && NotDeleted(Channel) [ && HasUndeleted(Revision) ] | Query: `uuid`
+GET | post/list | - | NotDeleted(Post) && NotDeleted(Channel) [ && HasUndeleted(Revision) ] | -
 
 ## Invites v1
 
