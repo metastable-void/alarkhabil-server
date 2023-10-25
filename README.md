@@ -696,7 +696,8 @@ HTTP/1.1 200
         "channel": {
             "uuid": "<channel's uuid>",
             "handle": "<channel's handle>",
-            "name": "<channel's name>"
+            "name": "<channel's name>",
+            "lang": "<channel's language code>"
         }
     },
     ...
@@ -898,7 +899,8 @@ HTTP/1.1 200
         "channel": {
             "uuid": "<channel's uuid>",
             "handle": "<channel's handle>",
-            "name": "<channel's name>"
+            "name": "<channel's name>",
+            "lang": "<channel's language code>"
         }
     },
     ...
