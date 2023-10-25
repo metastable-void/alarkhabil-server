@@ -2,6 +2,7 @@
 mod invite;
 mod author;
 mod channel;
+mod post;
 
 
 pub use invite::Invite;
@@ -12,6 +13,9 @@ pub use author::AuthorSummary;
 pub use channel::validate_channel_handle;
 pub use channel::ChannelInfo;
 pub use channel::ChannelSummary;
+
+pub use post::RevisionInfo;
+pub use post::PostInfo;
 
 
 use regex::Regex;

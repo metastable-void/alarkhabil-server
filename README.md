@@ -453,7 +453,7 @@ HTTP/1.1 200
         "lang": "<channel's language code>"
     },
     "revision_uuid": "<revision's uuid>",
-    "revision_date": "<revision date in seconds since UNIX epoch>",
+    "revision_date": <revision date in seconds since UNIX epoch>,
     "title": "<title>",
     "author": {
         "uuid": "<author's uuid>",

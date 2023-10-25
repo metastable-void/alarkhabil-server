@@ -18,6 +18,7 @@ mod self_update;
 mod channel_new;
 mod channel_update;
 mod channel_delete;
+mod post_new;
 
 mod meta_info;
 mod meta_list;
@@ -40,6 +41,7 @@ pub use self_update::api_self_update;
 pub use channel_new::api_channel_new;
 pub use channel_update::api_channel_update;
 pub use channel_delete::api_channel_delete;
+pub use post_new::api_post_new;
 
 pub use meta_info::api_meta_info;
 pub use meta_list::api_meta_list;
