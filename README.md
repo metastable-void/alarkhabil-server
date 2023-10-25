@@ -274,7 +274,7 @@ HTTP/1.1 200
 {
     "uuid": "<author's uuid>",
     "name": "<author's name>",
-    "created_at": <registration date in seconds since UNIX epoch (integer)>
+    "created_date": <registration date in seconds since UNIX epoch (integer)>
     "description_text": "<description markdown>",
     "description_html": "<description html>"
 }
@@ -307,7 +307,7 @@ HTTP/1.1 200
     "uuid": "<channel's uuid>",
     "handle": "<channel's handle>",
     "name": "<channel name>",
-    "created_at": <seconds since UNIX epoch (integer)>
+    "created_date": <seconds since UNIX epoch (integer)>
     "lang": "<channel's language code>",
     "description_text": "<description markdown>",
     "description_html": "<description html>"
@@ -343,7 +343,7 @@ HTTP/1.1 200
     "uuid": "<channel's uuid>",
     "handle": "<channel's handle>",
     "name": "<channel name>",
-    "created_at": <seconds since UNIX epoch (integer)>
+    "created_date": <seconds since UNIX epoch (integer)>
     "lang": "<channel's language code>",
     "description_text": "<description markdown>",
     "description_html": "<description html>"
@@ -547,7 +547,7 @@ HTTP/1.1 200
 {
     "uuid": "<author's uuid>",
     "name": "<author's name>",
-    "created_at": <registration date in seconds since UNIX epoch (integer)>
+    "created_date": <registration date in seconds since UNIX epoch (integer)>
     "description_text": "<description markdown>",
     "description_html": "<description html>"
 }
@@ -646,7 +646,7 @@ HTTP/1.1 200
     "uuid": "<channel's uuid>",
     "handle": "<channel's handle>",
     "name": "<channel name>",
-    "created_at": <seconds since UNIX epoch (integer)>
+    "created_date": <seconds since UNIX epoch (integer)>
     "lang": "<channel's language code>",
     "description_text": "<description markdown>",
     "description_html": "<description html>"

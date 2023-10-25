@@ -105,6 +105,9 @@ async fn main() -> anyhow::Result<()> {
         .route("/api/v1/admin/channel/delete", post(api::v1::api_admin_channel_delete))
         .route("/api/v1/admin/post/delete", post(api::v1::api_admin_post_delete))
 
+        // Author's endpoints v1
+        .route("/api/v1/self/update", post(api::v1::api_self_update))
+
         // Public endpoints v1
         .route("/api/v1/meta/info", get(api::v1::api_meta_info))
 
