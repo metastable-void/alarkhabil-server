@@ -47,7 +47,7 @@ pub async fn api_channel_new(
         let trx = db_connection.transaction()?;
 
         let author_id = trx.query_row(
-            "SELECT author.id FROM author, author_public_key WHERE author_public_key.public_key = ? AND author.id = author_public_key.author_id",
+            "SELECT author.id FROM author, author_public_key WHERE author_public_key.public_key = ? AND author.is_deleted = 0 AND author.id = author_public_key.author_id",
             [&public_key],
             |row| {
                 let author_id: u32 = row.get(0)?;

@@ -38,7 +38,7 @@ pub async fn api_self_update(
         let trx = db_connection.transaction()?;
 
         let (author_id, author_uuid, created_date) = trx.query_row(
-            "SELECT author.id, author.uuid, author.created_date FROM author, author_public_key WHERE author_public_key.public_key = ? AND author.id = author_public_key.author_id",
+            "SELECT author.id, author.uuid, author.created_date FROM author, author_public_key WHERE author_public_key.public_key = ? AND author.is_deleted = 0 AND author.id = author_public_key.author_id",
             [&public_key],
             |row| {
                 let author_id: u32 = row.get(0)?;

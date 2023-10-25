@@ -48,7 +48,11 @@ pub async fn api_account_change_credentials(
         let mut db_connection = state.db_connection.lock().unwrap();
         let trx = db_connection.transaction()?;
 
-        let public_key_id = trx.query_row("SELECT id FROM author_public_key WHERE public_key = ?", [&public_key], |row| row.get::<_, u32>(0))?;
+        let public_key_id = trx.query_row(
+            "SELECT author_public_key.id FROM author, author_public_key WHERE author_public_key.public_key = ? AND author.is_deleted = 0 AND author.id = author_public_key.author_id",
+            [&public_key],
+            |row| row.get::<_, u32>(0),
+        )?;
         trx.execute("UPDATE author_public_key SET public_key = ? WHERE id = ?", (&msg.new_public_key, public_key_id))?;
         trx.commit()?;
 
