@@ -2,6 +2,8 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
+use regex::Regex;
+
 use axum::{
     extract::{State, Query},
     response::IntoResponse,
@@ -36,7 +38,13 @@ pub async fn api_admin_meta_update(
             return Err(anyhow::anyhow!("Invalid token"));
         }
 
+        let re = Regex::new(r"^[a-z0-9]+(-[a-z0-9]+)*$").unwrap();
         let page_name = &msg.page_name;
+
+        if !re.is_match(page_name) || page_name.len() > 64 {
+            return Err(anyhow::anyhow!("Invalid page name"));
+        }
+
         let title = &msg.title;
         let text = &msg.text;
         let time = sys_time::get_sys_time_in_secs();

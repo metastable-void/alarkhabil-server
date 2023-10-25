@@ -58,6 +58,7 @@ dependencies = [
  "log",
  "monostate",
  "rand",
+ "regex",
  "rusqlite",
  "serde",
  "serde_json",

@@ -1,6 +1,8 @@
 
 use std::sync::Arc;
 
+use regex::Regex;
+
 use serde::{Serialize, Deserialize};
 use monostate::MustBe;
 
@@ -35,6 +37,16 @@ pub async fn api_channel_new(
         let public_key = msg.public_key()?.to_owned();
         let msg = msg.verify()?;
         let msg = serde_json::from_slice::<MsgChannelNew>(&msg)?;
+
+        if msg.lang.len() > 64 {
+            return Err(anyhow::anyhow!("Invalid language code"));
+        }
+
+        let re = Regex::new(r"^[a-z0-9]+(-[a-z0-9]+)*$").unwrap();
+        let handle = &msg.handle;
+        if !re.is_match(handle) || handle.len() > 64 {
+            return Err(anyhow::anyhow!("Invalid handle"));
+        }
 
         let mut db_connection = state.db_connection.lock().unwrap();
         let trx = db_connection.transaction()?;

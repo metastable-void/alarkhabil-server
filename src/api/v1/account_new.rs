@@ -43,6 +43,14 @@ pub async fn api_account_new(
 
         let uuid = invite_msg.uuid();
 
+        if let Ok(uuid) = uuid::Uuid::parse_str(uuid) {
+            if uuid.get_version_num() != 4 {
+                return Err(anyhow::anyhow!("Invalid invite"));
+            }
+        } else {
+            return Err(anyhow::anyhow!("Invalid invite"));
+        };
+
         let mut db_connection = state.db_connection.lock().unwrap();
         let trx = db_connection.transaction()?;
 
