@@ -1,7 +1,6 @@
 
 use serde::{Serialize, Deserialize};
 
-use crate::markdown;
 use crate::api::v1::types::is_valid_dns_token;
 
 
@@ -22,7 +21,6 @@ pub struct ChannelInfo {
     created_date: u64,
     lang: String,
     description_text: String,
-    description_html: String,
 }
 
 impl ChannelInfo {
@@ -34,7 +32,6 @@ impl ChannelInfo {
             created_date,
             lang: lang.to_string(),
             description_text: description_text.to_string(),
-            description_html: markdown::to_html(description_text),
         }
     }
 
@@ -60,10 +57,6 @@ impl ChannelInfo {
 
     pub fn description_text(&self) -> &str {
         &self.description_text
-    }
-
-    pub fn description_html(&self) -> &str {
-        &self.description_html
     }
 }
 

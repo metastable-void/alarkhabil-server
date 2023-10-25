@@ -1,8 +1,6 @@
 
 use serde::{Serialize, Deserialize};
 
-use crate::markdown;
-
 use crate::api::v1::types::{
     ChannelSummary,
     AuthorSummary,
@@ -62,7 +60,6 @@ pub struct PostInfo {
     revision_date: u64,
     title: String,
     revision_text: String,
-    revision_html: String,
     author: AuthorSummary,
 }
 
@@ -76,7 +73,6 @@ impl PostInfo {
             revision_date: revision.created_date(),
             title: revision.title().to_string(),
             revision_text: revision.revision_text().to_string(),
-            revision_html: markdown::to_html(revision.revision_text()),
             author: author.clone(),
         }
     }
@@ -107,10 +103,6 @@ impl PostInfo {
 
     pub fn revision_text(&self) -> &str {
         &self.revision_text
-    }
-
-    pub fn revision_html(&self) -> &str {
-        &self.revision_html
     }
 
     pub fn author(&self) -> &AuthorSummary {

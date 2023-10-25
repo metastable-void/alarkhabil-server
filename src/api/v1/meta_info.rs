@@ -11,7 +11,6 @@ use hyper::StatusCode;
 
 use crate::state::AppState;
 use crate::error_reporting::{ErrorReporting, result_into_response};
-use crate::markdown;
 
 
 pub async fn api_meta_info(
@@ -50,7 +49,6 @@ pub async fn api_meta_info(
             "updated_date": updated_date,
             "title": title,
             "text": &page_text,
-            "html": markdown::to_html(&page_text),
         })).into_response())
     }, ErrorReporting::Json).await
 }

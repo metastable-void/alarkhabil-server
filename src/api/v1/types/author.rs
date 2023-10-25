@@ -1,8 +1,6 @@
 
 use serde::{Serialize, Deserialize};
 
-use crate::markdown;
-
 
 /// AuthorInfo is a struct that contains detailed information about an author.
 /// It is for example returned by `/api/v1/author/info`.
@@ -12,7 +10,6 @@ pub struct AuthorInfo {
     name: String,
     created_date: u64,
     description_text: String,
-    description_html: String,
 }
 
 impl AuthorInfo {
@@ -22,7 +19,6 @@ impl AuthorInfo {
             name: name.to_string(),
             created_date,
             description_text: description_text.to_string(),
-            description_html: markdown::to_html(description_text),
         }
     }
 
@@ -40,10 +36,6 @@ impl AuthorInfo {
 
     pub fn description_text(&self) -> &str {
         &self.description_text
-    }
-
-    pub fn description_html(&self) -> &str {
-        &self.description_html
     }
 }
 
