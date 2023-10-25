@@ -126,6 +126,7 @@ async fn main() -> anyhow::Result<()> {
         .route("/api/v1/channel/authors", get(api::v1::api_channel_authors))
         .route("/api/v1/channel/posts", get(api::v1::api_channel_posts))
         .route("/api/v1/post/info", get(api::v1::api_post_info))
+        .route("/api/v1/post/list", get(api::v1::api_post_list))
 
         // 404 page
         .fallback(handler_404)
