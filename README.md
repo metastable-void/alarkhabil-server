@@ -508,7 +508,7 @@ HTTP/1.1 200
 
 ### GET /api/v1/meta/info
 
-**Query format:** `?name={meta page name}`
+**Query format:** `?page_name={meta page name}`
 
 **Response type:** JSON
 
