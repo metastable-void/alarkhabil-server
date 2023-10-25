@@ -518,7 +518,7 @@ Response (post found):
 HTTP/1.1 200
 {
     "page_name": "<name of meta page>",
-    "updated_date": "<revision date in seconds since UNIX epoch>",
+    "updated_date": <revision date in seconds since UNIX epoch>,
     "title": "<title>",
     "text": "<page markdown text>",
     "html": "<page html>"

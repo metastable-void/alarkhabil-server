@@ -29,3 +29,4 @@ tower = "0.4.13"
 digest = "*"
 generic-array = "*"
 uuid = { version = "1.5", features = ["v4"] }
+comrak = "0.19.0"

@@ -5,3 +5,4 @@ pub mod state;
 pub mod api;
 pub mod crypto;
 pub mod error_reporting;
+pub mod markdown;
