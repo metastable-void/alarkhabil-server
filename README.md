@@ -22,6 +22,8 @@ Backend API server for Al Arkhabil, the independent thought publication platform
 
 All endpoints are below `/api/v1/`.
 
+Regex for ValidDnsToken(): `^[a-z0-9]+(-[a-z0-9]+)*$`
+
 Method | URL | Auth | Invariant | Input
 -------|-----|------|-----------|------
 GET | invite/new | `{invite making token}` | - | Query: `token`

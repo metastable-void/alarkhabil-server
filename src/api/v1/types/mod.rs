@@ -23,3 +23,8 @@ pub fn validate_language_code(lang: &str) -> Result<(), anyhow::Error> {
     }
     Ok(())
 }
+
+pub fn is_valid_dns_token(token: &str) -> bool {
+    let re = Regex::new(r"^[a-z0-9]+(-[a-z0-9]+)*$").unwrap();
+    token.len() <= 64 && re.is_match(token)
+}

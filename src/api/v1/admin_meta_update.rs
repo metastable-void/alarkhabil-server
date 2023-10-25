@@ -2,8 +2,6 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use regex::Regex;
-
 use axum::{
     extract::{State, Query},
     response::IntoResponse,
@@ -15,6 +13,7 @@ use serde::{Serialize, Deserialize};
 use crate::state::AppState;
 use crate::error_reporting::{ErrorReporting, result_into_response};
 use crate::sys_time;
+use crate::api::v1::types::is_valid_dns_token;
 
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -38,10 +37,8 @@ pub async fn api_admin_meta_update(
             return Err(anyhow::anyhow!("Invalid token"));
         }
 
-        let re = Regex::new(r"^[a-z0-9]+(-[a-z0-9]+)*$").unwrap();
         let page_name = &msg.page_name;
-
-        if !re.is_match(page_name) || page_name.len() > 64 {
+        if !is_valid_dns_token(page_name) {
             return Err(anyhow::anyhow!("Invalid page name"));
         }
 
