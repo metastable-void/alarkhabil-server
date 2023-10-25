@@ -24,6 +24,10 @@ All endpoints are below `/api/v1/`.
 
 Regex for ValidDnsToken(): `^[a-z0-9]+(-[a-z0-9]+)*$`
 
+* __Account__ means the authenticating user's account.
+* __self__ means the author object of the authenticating user.
+* __Author__ is an author object.
+
 Method | URL | Auth | Invariant | Input
 -------|-----|------|-----------|------
 GET | invite/new | `{invite making token}` | - | Query: `token`
