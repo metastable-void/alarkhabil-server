@@ -52,7 +52,7 @@ GET | meta/list | - | - | -
 GET | author/info | - | NotDeleted(Author) | Query: `uuid`
 GET | author/list | - | NotDeleted(Author) | -
 GET | author/channels | - | NotDeleted(Author) && NotDeleted(Channel) | Query: `uuid`
-GET | author/posts | - | NotDeleted(Author) && NotDeleted(Channel) && NotDeleted(Post) | Query: `uuid`
+GET | author/posts | - | NotDeleted(Author) && NotDeleted(Channel) && NotDeleted(Post) && NotDeleted(Revision) | Query: `uuid`
 GET | channel/info | - | NotDeleted(Channel) | Query: `uuid` or `handle`
 GET | channel/list | - | NotDeleted(Channel) | -
 GET | channel/authors | - | NotDeleted(Channel) && NotDeleted(Author) | Query: `uuid`
