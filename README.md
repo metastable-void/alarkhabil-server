@@ -18,19 +18,21 @@ Backend API server for Al Arkhabil, the independent thought publication platform
 * __Admin token__: hex-encoded string of random data. Can be used for administrative actions (e.g. deletion of users, etc.).
 * __Invite token__: base64-encoded string containing message signed by the server. Can be used for requesting a new account. Can be parsed freely to get the invited user's UUID.
 
-## List of endpoints
+## List of v1 endpoints
+
+All endpoints are below `/api/v1/`.
 
 Method | URL | Auth | Invariant | Input
 -------|-----|------|-----------|------
-GET | /api/v1/invite/new | `{invite making token}` | - | Query: `token`
-POST | /api/v1/account/new | Self-signed by new public key | Public key does not exist yet on DB | Signed JSON data (POST)
-POST | /api/v1/account/change_credentials | **Pubkey account auth** (Signed by old public key) | Account is not deleted / Valid signature by new public key included | Signed JSON data (POST)
-POST | /api/v1/account/delete | **Pubkey account auth** | Account is not yet deleted | Signed JSON data (POST)
-POST | /api/v1/admin/meta/update | `{admin token}` | ValidDnsToken(`page_name`) | Query: `token`; Plain JSON data (POST)
-POST | /api/v1/admin/meta/delete | `{admin token}` | MetaPageExists(`page_name`) | Query: `token`, `page_name`; Empty POST data
-POST | /api/v1/admin/author/delete | `{admin token}` | AuthorExists(`uuid`) | Query: `token`, `uuid`; Empty POST data
-POST | /api/v1/admin/channel/delete | `{admin token}` | ChannelExists(`uuid`) | Query: `token`, `uuid`; Empty POST data
-POST | /api/v1/admin/post/delete | `{admin token}` | PostExists(`uuid`) | Query: `token`, `uuid`; Empty POST data
+GET | invite/new | `{invite making token}` | - | Query: `token`
+POST | account/new | Self-signed by new public key | Public key does not exist yet on DB | Signed JSON data (POST)
+POST | account/change_credentials | **Pubkey account auth** (Signed by old public key) | Account is not deleted / Valid signature by new public key included | Signed JSON data (POST)
+POST | account/delete | **Pubkey account auth** | Account is not yet deleted | Signed JSON data (POST)
+POST | admin/meta/update | `{admin token}` | ValidDnsToken(`page_name`) | Query: `token`; Plain JSON data (POST)
+POST | admin/meta/delete | `{admin token}` | MetaPageExists(`page_name`) | Query: `token`, `page_name`; Empty POST data
+POST | admin/author/delete | `{admin token}` | AuthorExists(`uuid`) | Query: `token`, `uuid`; Empty POST data
+POST | admin/channel/delete | `{admin token}` | ChannelExists(`uuid`) | Query: `token`, `uuid`; Empty POST data
+POST | admin/post/delete | `{admin token}` | PostExists(`uuid`) | Query: `token`, `uuid`; Empty POST data
 
 ## Invites v1
 
