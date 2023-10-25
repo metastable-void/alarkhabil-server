@@ -582,6 +582,27 @@ HTTP/1.1 404
 }
 ```
 
+### GET /api/v1/author/list
+
+The results are ordered with the newest registration first.
+
+**Query format:** (none) - TODO: allow paging
+
+**Response type:** JSON
+
+Response:
+
+```
+HTTP/1.1 200
+[
+    {
+        "uuid": "<author's uuid>",
+        "name": "<author's name>"
+    },
+    ...
+]
+```
+
 ### GET /api/v1/author/channels
 
 **Query format:** `?uuid={author uuid}`
@@ -680,6 +701,28 @@ HTTP/1.1 404
 {
     "status": "not found"
 }
+```
+
+### GET /api/v1/channel/list
+
+The results are ordered with the newest channel first.
+
+**Query format:** (none) - TODO: allow paging
+
+**Response type:** JSON
+
+Response:
+
+```
+HTTP/1.1 200
+[
+    {
+        "uuid": "<channel's uuid>",
+        "handle": "<channel's handle>",
+        "name": "<channel's name>"
+    },
+    ...
+]
 ```
 
 ### GET /api/v1/channel/authors
@@ -787,6 +830,38 @@ HTTP/1.1 404
 {
     "status": "not found"
 }
+```
+
+### GET /api/v1/post/list
+
+The results are ordered with the newest post first.
+
+**Query format:** (none) - TODO: allow paging
+
+**Response type:** JSON
+
+Response:
+
+```
+HTTP/1.1 200
+[
+    {
+        "post_uuid": "<posts's uuid>",
+        "revision_uuid": "<revision's uuid>",
+        "revision_date": "<revision date in seconds since UNIX epoch>",
+        "title": "<title>",
+        "author": {
+            "uuid": "<author's uuid>",
+            "name": "<author's name>"
+        },
+        "channel": {
+            "uuid": "<channel's uuid>",
+            "handle": "<channel's handle>",
+            "name": "<channel's name>"
+        }
+    },
+    ...
+]
 ```
 
 ## Build
