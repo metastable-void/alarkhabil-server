@@ -1,8 +1,18 @@
 
+use regex::Regex;
+
 use serde::{Serialize, Deserialize};
 
 use crate::markdown;
 
+
+pub fn validate_channel_handle(handle: &str) -> Result<(), anyhow::Error> {
+    let re = Regex::new(r"^[a-z0-9]+(-[a-z0-9]+)*$").unwrap();
+    if !re.is_match(handle) || handle.len() > 64 {
+        return Err(anyhow::anyhow!("Invalid handle"));
+    }
+    Ok(())
+}
 
 /// ChannelInfo is a struct that contains detailed information about a channel.
 /// It is for example returned by `/api/v1/channel/info`.
