@@ -2,6 +2,7 @@
 use std::sync::Arc;
 use std::collections::HashMap;
 
+use hyper::StatusCode;
 use axum::{
     extract::{State, Query},
     response::IntoResponse,
@@ -24,7 +25,7 @@ pub async fn api_author_info(
         let mut db_connection = state.db_connection.lock().unwrap();
         let trx = db_connection.transaction()?;
 
-        let (name, created_date, description_text) = trx.query_row(
+        let (name, created_date, description_text) = if let Ok(values) = trx.query_row(
             "SELECT name, registered_date, description_text FROM author WHERE is_deleted = 0 AND uuid = ?",
             [&author_uuid],
             |row| {
@@ -33,9 +34,18 @@ pub async fn api_author_info(
                 let description_text: String = row.get(2)?;
                 Ok((name, created_date, description_text))
             }
-        )?;
+        ) {
+            values
+        } else {
+            return Ok((
+                StatusCode::NOT_FOUND,
+                Json(serde_json::json!({
+                    "status": "not found",
+                })),
+            ).into_response());
+        };
 
         let author = AuthorInfo::new(author_uuid, &name, created_date, &description_text);
-        Ok(Json(author))
+        Ok(Json(author).into_response())
     }, ErrorReporting::Json).await
 }
