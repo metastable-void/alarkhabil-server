@@ -15,7 +15,11 @@ use crate::state::AppState;
 use crate::error_reporting::{ErrorReporting, result_into_response};
 use crate::sys_time;
 
-use crate::api::v1::types::{validate_channel_handle, ChannelInfo};
+use crate::api::v1::types::{
+    validate_language_code,
+    validate_channel_handle,
+    ChannelInfo,
+};
 
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -36,10 +40,7 @@ pub async fn api_channel_new(
         let msg = msg.verify()?;
         let msg = serde_json::from_slice::<MsgChannelNew>(&msg)?;
 
-        if msg.lang.len() > 64 {
-            return Err(anyhow::anyhow!("Invalid language code"));
-        }
-
+        validate_language_code(&msg.lang)?;
         validate_channel_handle(&msg.handle)?;
 
         let mut db_connection = state.db_connection.lock().unwrap();
