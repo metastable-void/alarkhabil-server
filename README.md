@@ -11,6 +11,7 @@ Backend API server for Al Arkhabil, the independent thought publication platform
 * Maximum bio/channel description size in Markdown is 4kB.
 * File uploads/user icons are not supported in the first release, but will be supported in future releases.
 * API pagination is not supported first. Dangerous queries are limited to 1000 entries.
+* Body text (including channel/author descriptions) strings are assumed be in Markdown. Titles and names are not. Currently this server does not parse Markdown.
 
 ### Tokens
 
@@ -316,8 +317,7 @@ HTTP/1.1 200
     "uuid": "<author's uuid>",
     "name": "<author's name>",
     "created_date": <registration date in seconds since UNIX epoch (integer)>
-    "description_text": "<description markdown>",
-    "description_html": "<description html>"
+    "description_text": "<description markdown>"
 }
 ```
 
@@ -350,8 +350,7 @@ HTTP/1.1 200
     "name": "<channel name>",
     "created_date": <seconds since UNIX epoch (integer)>
     "lang": "<channel's language code>",
-    "description_text": "<description markdown>",
-    "description_html": "<description html>"
+    "description_text": "<description markdown>"
 }
 ```
 
@@ -386,8 +385,7 @@ HTTP/1.1 200
     "name": "<channel name>",
     "created_date": <seconds since UNIX epoch (integer)>
     "lang": "<channel's language code>",
-    "description_text": "<description markdown>",
-    "description_html": "<description html>"
+    "description_text": "<description markdown>"
 }
 ```
 
@@ -460,7 +458,6 @@ HTTP/1.1 200
         "name": "<author's name>"
     },
     "revision_text": "<revision text>",
-    "revision_html": "<revision html>",
     "tags": [
         "<tag>",
         ...
@@ -511,7 +508,6 @@ HTTP/1.1 200
         "name": "<author's name>"
     },
     "revision_text": "<revision text>",
-    "revision_html": "<revision html>",
     "tags": [
         "<tag>",
         ...
@@ -561,8 +557,7 @@ HTTP/1.1 200
     "page_name": "<name of meta page>",
     "updated_date": <revision date in seconds since UNIX epoch>,
     "title": "<title>",
-    "text": "<page markdown text>",
-    "html": "<page html>"
+    "text": "<page markdown text>"
 }
 ```
 
@@ -609,8 +604,7 @@ HTTP/1.1 200
     "uuid": "<author's uuid>",
     "name": "<author's name>",
     "created_date": <registration date in seconds since UNIX epoch (integer)>
-    "description_text": "<description markdown>",
-    "description_html": "<description html>"
+    "description_text": "<description markdown>"
 }
 ```
 
@@ -731,8 +725,7 @@ HTTP/1.1 200
     "name": "<channel name>",
     "created_date": <seconds since UNIX epoch (integer)>
     "lang": "<channel's language code>",
-    "description_text": "<description markdown>",
-    "description_html": "<description html>"
+    "description_text": "<description markdown>"
 }
 ```
 
@@ -858,7 +851,6 @@ HTTP/1.1 200
         "name": "<author's name>"
     },
     "revision_text": "<revision text>",
-    "revision_html": "<revision html>",
     "tags": [
         "<tag>",
         ...
