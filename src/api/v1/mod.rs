@@ -20,6 +20,7 @@ mod channel_update;
 mod channel_delete;
 mod post_new;
 mod post_update;
+mod post_delete;
 
 mod meta_info;
 mod meta_list;
@@ -44,6 +45,7 @@ pub use channel_update::api_channel_update;
 pub use channel_delete::api_channel_delete;
 pub use post_new::api_post_new;
 pub use post_update::api_post_update;
+pub use post_delete::api_post_delete;
 
 pub use meta_info::api_meta_info;
 pub use meta_list::api_meta_list;
