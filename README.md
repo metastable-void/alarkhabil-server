@@ -7,8 +7,8 @@ Backend API server for Al Arkhabil, the independent thought publication platform
 ## About this API
 
 * Strings are always in UTF-8.
-* Maximum post size in Markdown is 100kB.
-* Maximum bio/channel description size in Markdown is 4kB.
+* Maximum post size in Markdown is 100kB. _TODO: currently implemented as 100k Unicode code points_
+* Maximum bio/channel description size in Markdown is 4kB. _TODO: currently implemented as 4k Unicode code points_
 * File uploads/user icons are not supported in the first release, but will be supported in future releases.
 * API pagination is not supported first. Dangerous queries are limited to 1000 entries.
 * Body text (including channel/author descriptions) strings are assumed to be in Markdown. Titles and names are not. Currently this server does not parse Markdown.
