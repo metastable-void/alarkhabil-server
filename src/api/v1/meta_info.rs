@@ -20,9 +20,11 @@ pub async fn api_meta_info(
     result_into_response(async move {
         let page_name = params.get("page_name").ok_or_else(|| anyhow::anyhow!("Missing page_name parameter"))?;
 
-        let db_connection = state.db_connection.lock().unwrap();
+        let mut db_connection = state.db_connection.lock().unwrap();
 
-        let (title, updated_date, page_text) = if let Ok(values) = db_connection.query_row(
+        let transaction = db_connection.transaction()?;
+
+        let (title, updated_date, page_text) = if let Ok(values) = transaction.query_row(
             "SELECT title, updated_date, page_text FROM meta_page WHERE page_name = ?", 
             [page_name],
             |row| {

@@ -17,9 +17,11 @@ pub async fn api_meta_list(
     Query(_params): Query<HashMap<String, String>>,
 ) -> impl IntoResponse {
     result_into_response(async move {
-        let db_connection = state.db_connection.lock().unwrap();
+        let mut db_connection = state.db_connection.lock().unwrap();
 
-        let mut stmt = db_connection.prepare(
+        let transaction = db_connection.transaction()?;
+
+        let mut stmt = transaction.prepare(
             "SELECT page_name, title, updated_date FROM meta_page ORDER BY updated_date DESC LIMIT 1000",
         )?;
 

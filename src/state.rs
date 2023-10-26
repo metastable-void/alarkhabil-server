@@ -5,6 +5,8 @@ use std::sync::Mutex;
 use sha2::Sha256;
 use hmac::{Hmac, Mac};
 
+use crate::db::RusqliteConnection;
+
 
 type HmacSha256 = Hmac<Sha256>;
 
@@ -57,6 +59,6 @@ impl PrimarySecret {
 
 #[derive(Debug)]
 pub struct AppState {
-    pub db_connection: Mutex<rusqlite::Connection>,
+    pub db_connection: Mutex<RusqliteConnection>,
     pub primary_secret: PrimarySecret,
 }

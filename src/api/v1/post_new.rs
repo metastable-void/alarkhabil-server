@@ -14,6 +14,7 @@ use crate::crypto::SignedMessage;
 use crate::state::AppState;
 use crate::error_reporting::{ErrorReporting, result_into_response};
 use crate::sys_time;
+use crate::limits;
 
 use crate::api::v1::types::{
     AuthorSummary,
@@ -41,6 +42,20 @@ pub async fn api_post_new(
         let public_key = msg.public_key()?.to_owned();
         let msg = msg.verify()?;
         let msg = serde_json::from_slice::<MsgPostNew>(&msg)?;
+
+        if msg.title.len() > limits::MAX_PAGE_TITLE_SIZE {
+            return Err(anyhow::anyhow!("Title is too long"));
+        }
+
+        if msg.text.len() > limits::MAX_PAGE_TEXT_SIZE {
+            return Err(anyhow::anyhow!("Text is too long"));
+        }
+
+        for tag in &msg.tags {
+            if tag.len() > limits::MAX_ITEM_NAME_SIZE {
+                return Err(anyhow::anyhow!("Tag is too long"));
+            }
+        }
 
         let mut db_connection = state.db_connection.lock().unwrap();
         let trx = db_connection.transaction()?;

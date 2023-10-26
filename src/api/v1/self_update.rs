@@ -15,6 +15,7 @@ use crate::state::AppState;
 use crate::error_reporting::{ErrorReporting, result_into_response};
 
 use crate::api::v1::types::AuthorInfo;
+use crate::limits;
 
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -36,6 +37,14 @@ pub async fn api_self_update(
 
         let mut db_connection = state.db_connection.lock().unwrap();
         let trx = db_connection.transaction()?;
+
+        if msg.description_text.len() > limits::MAX_ITEM_DESCRIPTION_SIZE {
+            return Err(anyhow::anyhow!("Description text is too long"));
+        }
+
+        if msg.name.len() > limits::MAX_ITEM_NAME_SIZE {
+            return Err(anyhow::anyhow!("Name is too long"));
+        }
 
         let (author_id, author_uuid, created_date) = trx.query_row(
             "SELECT author.id, author.uuid, author.created_date FROM author, author_public_key WHERE author_public_key.public_key = ? AND author.is_deleted = 0 AND author.id = author_public_key.author_id",

@@ -13,6 +13,7 @@ use serde::{Serialize, Deserialize};
 use crate::state::AppState;
 use crate::error_reporting::{ErrorReporting, result_into_response};
 use crate::sys_time;
+use crate::limits;
 use crate::api::v1::types::is_valid_dns_token;
 
 
@@ -40,6 +41,14 @@ pub async fn api_admin_meta_update(
         let page_name = &msg.page_name;
         if !is_valid_dns_token(page_name) {
             return Err(anyhow::anyhow!("Invalid page name"));
+        }
+
+        if msg.title.len() > limits::MAX_PAGE_TITLE_SIZE {
+            return Err(anyhow::anyhow!("Title is too long"));
+        }
+
+        if msg.text.len() > limits::MAX_PAGE_TEXT_SIZE {
+            return Err(anyhow::anyhow!("Text is too long"));
         }
 
         let title = &msg.title;

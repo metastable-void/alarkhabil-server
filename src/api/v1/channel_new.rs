@@ -14,6 +14,7 @@ use crate::crypto::SignedMessage;
 use crate::state::AppState;
 use crate::error_reporting::{ErrorReporting, result_into_response};
 use crate::sys_time;
+use crate::limits;
 
 use crate::api::v1::types::{
     validate_language_code,
@@ -42,6 +43,10 @@ pub async fn api_channel_new(
 
         validate_language_code(&msg.lang)?;
         validate_channel_handle(&msg.handle)?;
+
+        if msg.name.len() > limits::MAX_ITEM_NAME_SIZE {
+            return Err(anyhow::anyhow!("Name is too long"));
+        }
 
         let mut db_connection = state.db_connection.lock().unwrap();
         let trx = db_connection.transaction()?;

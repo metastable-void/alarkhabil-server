@@ -16,6 +16,7 @@ use crate::base64;
 use crate::state::AppState;
 use crate::error_reporting::{ErrorReporting, result_into_response};
 use crate::api::v1::types::Invite;
+use crate::limits;
 
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -40,6 +41,10 @@ pub async fn api_account_new(
         let key = PrivateKey::from_bytes("hmac-sha256", &signing_key)?;
         let invite_msg = invite.verify_with_secret(key)?;
         let invite_msg = serde_json::from_slice::<Invite>(&invite_msg)?;
+
+        if msg.name.len() > limits::MAX_ITEM_NAME_SIZE {
+            return Err(anyhow::anyhow!("Name is too long"));
+        }
 
         let uuid = invite_msg.uuid();
 

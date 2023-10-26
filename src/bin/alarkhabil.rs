@@ -15,6 +15,7 @@ use axum::{
 };
 
 use alarkhabil_server::state::{PrimarySecret, AppState};
+use alarkhabil_server::db::RusqliteConnection;
 
 use alarkhabil_server::api;
 
@@ -48,17 +49,6 @@ async fn add_global_headers<B>(req: Request<B>, next: Next<B>) -> Response {
     res
 }
 
-async fn open_database(db_path: &str) -> Result<rusqlite::Connection, anyhow::Error> {
-    let conn = if db_path.is_empty() {
-        log::warn!("DB_PATH not set, using in-memory database");
-        rusqlite::Connection::open_in_memory()?
-    } else {
-        log::info!("Using database at {}", db_path);
-        rusqlite::Connection::open(&db_path)?
-    };
-    Ok(conn)
-}
-
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     dotenvy::dotenv()?;
@@ -68,17 +58,17 @@ async fn main() -> anyhow::Result<()> {
     let addr_string = env::var("LISTEN_ADDR").unwrap_or("".to_string());
     let addr = SocketAddr::from_str(&addr_string).unwrap_or(SocketAddr::from(([127, 0, 0, 1], 7781)));
 
-    // SQLite path
-    let db_path: String = env::var("DB_PATH").unwrap_or("".to_string());
-
     // initialize DB
-    let mut db_connection = open_database(&db_path).await?;
-    {
-        let init_tx = db_connection.transaction()?;
-        init_tx.execute_batch(SQL_SCHEMA_SQLITE)?;
-        init_tx.commit()?;
-    }
-
+    let db_path: String = env::var("DB_PATH").unwrap_or("".to_string());
+    let db_path = if db_path.is_empty() {
+        log::warn!("DB_PATH not set, using in-memory database");
+        None
+    } else {
+        log::info!("Using database at {}", db_path);
+        Some(db_path.as_str())
+    };
+    let db_connection = RusqliteConnection::open(db_path, Some(SQL_SCHEMA_SQLITE))?;
+    
     // initialize state
     let primary_secret = PrimarySecret::new_from_env();
     let state = Arc::new(AppState {
