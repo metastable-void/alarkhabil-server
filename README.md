@@ -926,7 +926,7 @@ HTTP/1.1 200
 
 The results are ordered with the newest post first.
 
-**Query format:** (none) - TODO: allow paging
+**Query format:** `?tag_name={tag name}` - TODO: allow paging
 
 **Response type:** JSON
 
