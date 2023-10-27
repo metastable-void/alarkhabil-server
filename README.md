@@ -59,8 +59,8 @@ GET | channel/authors | - | NotDeleted(Channel) && NotDeleted(Author) | Query: `
 GET | channel/posts | - | NotDeleted(Channel) && NotDeleted(Post) | Query: `uuid`
 GET | post/info | - | NotDeleted(Post) && NotDeleted(Channel) [ && HasUndeleted(Revision) ] | Query: `uuid`
 GET | post/list | - | NotDeleted(Post) && NotDeleted(Channel) [ && HasUndeleted(Revision) ] | -
-GET | tag/list | - | NotDeleted(Post) && HasUndeleted(Revision) | -
-GET | tag/posts | - | NotDeleted(Post) && HasUndeleted(Revision) | -
+GET | tag/list | - | NotDeleted(Post) && NotDeleted(Channel) && HasUndeleted(Revision) | -
+GET | tag/posts | - | NotDeleted(Post) && NotDeleted(Channel) && HasUndeleted(Revision) | -
 
 ## Invites v1
 
