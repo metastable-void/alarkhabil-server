@@ -59,6 +59,8 @@ GET | channel/authors | - | NotDeleted(Channel) && NotDeleted(Author) | Query: `
 GET | channel/posts | - | NotDeleted(Channel) && NotDeleted(Post) | Query: `uuid`
 GET | post/info | - | NotDeleted(Post) && NotDeleted(Channel) [ && HasUndeleted(Revision) ] | Query: `uuid`
 GET | post/list | - | NotDeleted(Post) && NotDeleted(Channel) [ && HasUndeleted(Revision) ] | -
+GET | tag/list | - | NotDeleted(Post) && HasUndeleted(Revision) | -
+GET | tag/posts | - | NotDeleted(Post) && HasUndeleted(Revision) | -
 
 ## Invites v1
 
@@ -869,6 +871,58 @@ HTTP/1.1 404
 ```
 
 ### GET /api/v1/post/list
+
+The results are ordered with the newest post first.
+
+**Query format:** (none) - TODO: allow paging
+
+**Response type:** JSON
+
+Response:
+
+```
+HTTP/1.1 200
+[
+    {
+        "post_uuid": "<posts's uuid>",
+        "revision_uuid": "<revision's uuid>",
+        "revision_date": "<revision date in seconds since UNIX epoch>",
+        "title": "<title>",
+        "author": {
+            "uuid": "<author's uuid>",
+            "name": "<author's name>"
+        },
+        "channel": {
+            "uuid": "<channel's uuid>",
+            "handle": "<channel's handle>",
+            "name": "<channel's name>",
+            "lang": "<channel's language code>"
+        }
+    },
+    ...
+]
+```
+
+### GET /api/v1/tag/list
+
+**Query format:** (none) - TODO: allow paging
+
+**Response type:** JSON
+
+Response:
+
+```
+HTTP/1.1 200
+[
+    {
+        "tag_name": "<tag name>",
+        "page_count": <page count>
+    },
+    ...
+]
+```
+
+### GET /api/v1/tag/posts
 
 The results are ordered with the newest post first.
 
