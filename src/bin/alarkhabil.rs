@@ -85,6 +85,7 @@ async fn main() -> anyhow::Result<()> {
 
         // Accounts v1
         .route("/api/v1/account/new", post(api::v1::api_account_new))
+        .route("/api/v1/account/check_credentials", post(api::v1::api_account_check_credentials))
         .route("/api/v1/account/change_credentials", post(api::v1::api_account_change_credentials))
         .route("/api/v1/account/delete", post(api::v1::api_account_delete))
 
