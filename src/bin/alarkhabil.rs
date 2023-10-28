@@ -6,13 +6,20 @@ use std::sync::{Arc, Mutex};
 
 use hyper::{Request, StatusCode};
 use axum::{
-    routing::{get, post, options},
+    routing::{get, post},
     Router,
     Server,
     response::{IntoResponse, Redirect, Response},
     Json,
     middleware::Next,
     http::header,
+};
+
+use hyper::Method;
+
+use tower_http::cors::{
+    CorsLayer,
+    AllowOrigin,
 };
 
 use alarkhabil_server::state::{PrimarySecret, AppState};
@@ -25,7 +32,6 @@ use alarkhabil_server::api;
 static SQL_SCHEMA_SQLITE: &str = include_str!("../sql/schema-sqlite.sql");
 static URL_GITHUB: &str = "https://github.com/metastable-void/alarkhabil-server";
 static RESPONSE_HEADER_CSP: &str = "default-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none';";
-static RESPONSE_HEADER_ACCESS_CONTROL_ALLOW_ORIGIN: &str = "*";
 
 
 async fn handler_root() -> impl IntoResponse {
@@ -42,21 +48,10 @@ async fn handler_404() -> impl IntoResponse {
     )
 }
 
-async fn handler_preflight() -> impl IntoResponse {
-    (
-        StatusCode::NO_CONTENT,
-        [
-            (header::ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, OPTIONS"),
-            (header::ACCESS_CONTROL_ALLOW_HEADERS, "Content-Type, Authorization"),
-        ],
-    )
-}
-
 async fn add_global_headers<B>(req: Request<B>, next: Next<B>) -> Response {
     let mut res = next.run(req).await;
     let headers = res.headers_mut();
     headers.append("content-security-policy", RESPONSE_HEADER_CSP.parse().unwrap());
-    headers.append("access-control-allow-origin", RESPONSE_HEADER_ACCESS_CONTROL_ALLOW_ORIGIN.parse().unwrap());
     res
 }
 
@@ -86,6 +81,11 @@ async fn main() -> anyhow::Result<()> {
         db_connection: Mutex::new(db_connection),
         primary_secret: primary_secret,
     });
+
+    let cors = CorsLayer::new()
+        .allow_origin(AllowOrigin::any())
+        .allow_methods(vec![Method::GET, Method::POST])
+        .allow_headers(vec![header::CONTENT_TYPE, header::AUTHORIZATION]);
 
     // define routes
     let app = Router::new()
@@ -132,12 +132,10 @@ async fn main() -> anyhow::Result<()> {
         .route("/api/v1/tag/list", get(api::v1::api_tag_list))
         .route("/api/v1/tag/posts", get(api::v1::api_tag_posts))
 
-        // CORS preflight
-        .route("/api/v1/*path", options(handler_preflight))
-
         // 404 page
         .fallback(handler_404)
 
+        .layer(cors)
         .layer(axum::middleware::from_fn(add_global_headers))
 
         // Set state

@@ -25,7 +25,8 @@ curve25519-dalek = "4"
 base64 = "0.21.4"
 futures = "0.3.28"
 axum = "0.6.20"
-tower = "0.4.13"
+tower = "0.4"
+tower-http = { version = "0.4", features = ["cors"] }
 digest = "*"
 generic-array = "*"
 uuid = { version = "1.5", features = ["v4"] }
