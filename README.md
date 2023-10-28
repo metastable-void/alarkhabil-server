@@ -33,6 +33,7 @@ Method | URL | Auth | Invariant | Input
 -------|-----|------|-----------|------
 GET | invite/new | `{invite making token}` | - | Query: `token`
 POST | account/new | Self-signed by new public key | Public key does not exist yet on DB | Signed JSON data (POST)
+POST | account/check_credentials | **Pubkey account auth** | NotDeleted(Account) | Signed JSON data (POST)
 POST | account/change_credentials | **Pubkey account auth** (Signed by old public key) | NotDeleted(Account) && Valid signature by new public key included | Signed JSON data (POST)
 POST | account/delete | **Pubkey account auth** | NotDeleted(Account) | Signed JSON data (POST)
 POST | admin/meta/update | `{admin token}` | ValidDnsToken(`page_name`) | Query: `token`; Plain JSON data (POST)
@@ -122,6 +123,33 @@ HTTP/1.1 200
 {
     "status": "ok",
     "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+}
+```
+
+### POST /api/v1/account/check_credentials
+
+Basically a no-op authenticated request. Returns an error if authentication fails.
+
+**Post data:** Alarkhabil-ed25519-signed JSON
+
+**Response type:** JSON
+
+Will return **400 Bad Request** for invalid requests.
+
+Payload:
+
+```
+{
+    "command": "account_check_credentials"
+}
+```
+
+Response example:
+
+```
+HTTP/1.1 200
+{
+    "status": "ok"
 }
 ```
 
