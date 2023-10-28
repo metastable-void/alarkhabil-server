@@ -6,12 +6,13 @@ use std::sync::{Arc, Mutex};
 
 use hyper::{Request, StatusCode};
 use axum::{
-    routing::{get, post},
+    routing::{get, post, options},
     Router,
     Server,
     response::{IntoResponse, Redirect, Response},
     Json,
     middleware::Next,
+    http::header,
 };
 
 use alarkhabil_server::state::{PrimarySecret, AppState};
@@ -38,6 +39,16 @@ async fn handler_404() -> impl IntoResponse {
             "status": "error",
             "message": "Not found",
         })),
+    )
+}
+
+async fn handler_preflight() -> impl IntoResponse {
+    (
+        StatusCode::NO_CONTENT,
+        [
+            (header::ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, OPTIONS"),
+            (header::ACCESS_CONTROL_ALLOW_HEADERS, "Content-Type, Authorization"),
+        ],
     )
 }
 
@@ -120,6 +131,9 @@ async fn main() -> anyhow::Result<()> {
         .route("/api/v1/post/list", get(api::v1::api_post_list))
         .route("/api/v1/tag/list", get(api::v1::api_tag_list))
         .route("/api/v1/tag/posts", get(api::v1::api_tag_posts))
+
+        // CORS preflight
+        .route("/api/v1/*path", options(handler_preflight))
 
         // 404 page
         .fallback(handler_404)
