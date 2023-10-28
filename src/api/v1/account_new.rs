@@ -69,7 +69,7 @@ pub async fn api_account_new(
         trx.execute("INSERT INTO author (uuid, name, registered_date) VALUES (?, ?, ?)", (uuid, name, now))?;
         let author_id = trx.query_row("SELECT id FROM author WHERE uuid = ?", [uuid], |row| row.get::<_, u32>(0))?;
 
-        trx.execute("INSERT INTO public_key (author_id, type, public_key) VALUES (?, ?, ?)", (author_id, "ed25519", public_key))?;
+        trx.execute("INSERT INTO author_public_key (author_id, type, public_key) VALUES (?, ?, ?)", (author_id, "ed25519", public_key))?;
 
         trx.commit()?;
 
