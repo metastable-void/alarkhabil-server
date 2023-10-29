@@ -85,7 +85,7 @@ pub async fn api_post_update(
             }
         )?;
 
-        let mut stmt = trx.prepare("SELECT tag FROM post_tag WHERE post_id = ?")?;
+        let mut stmt = trx.prepare("SELECT name FROM post_tag WHERE post_id = ?")?;
         let mut rows = stmt.query([&post_id])?;
 
         let mut old_tags = Vec::new();
@@ -113,14 +113,14 @@ pub async fn api_post_update(
 
         for tag in &tags_to_delete {
             trx.execute(
-                "DELETE FROM post_tag WHERE post_id = ? AND tag = ?",
+                "DELETE FROM post_tag WHERE post_id = ? AND name = ?",
                 (&post_id, tag),
             )?;
         }
 
         for tag in &tags_to_insert {
             trx.execute(
-                "INSERT INTO post_tag (post_id, tag) VALUES (?, ?)",
+                "INSERT INTO post_tag (post_id, name) VALUES (?, ?)",
                 (&post_id, tag),
             )?;
         }

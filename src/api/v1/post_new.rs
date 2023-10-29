@@ -100,7 +100,7 @@ pub async fn api_post_new(
 
         for tag in &msg.tags {
             trx.execute(
-                "INSERT INTO post_tag (post_id, tag) VALUES (?, ?)",
+                "INSERT INTO post_tag (post_id, name) VALUES (?, ?)",
                 (&post_id, tag),
             )?;
         }
