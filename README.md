@@ -45,6 +45,8 @@ POST | self/update | **Pubkey account auth** | NotDeleted(Account) | Signed JSON
 POST | channel/new | **Pubkey account auth** | NotDeleted(Account) && !ChannelExists(`handle`) && ValidDnsToken(`handle`) | Signed JSON data (POST)
 POST | channel/update | **Pubkey account auth** | NotDeleted(Account) && NotDeleted(Channel) && Owns(Channel) && NoConflict(`handle`) && ValidDnsToken(`handle`) | Signed JSON data (POST)
 POST | channel/delete | **Pubkey account auth** | NotDeleted(Account) && NotDeleted(Channel) && Owns(Channel) | Signed JSON data (POST)
+POST | channel/add_author | **Pubkey account auth** | NotDeleted(Account) && NotDelete(Channel) && Owns (Channel) && NotDeleted(Author) && Account != Author | Signed JSON data (POST)
+POST | channel/remove_author | **Pubkey account auth** | NotDeleted(Account) && NotDelete(Channel) && Owns (Channel) && NotDeleted(Author) && Account != Author | Signed JSON data (POST)
 POST | post/new | **Pubkey account auth** | NotDeleted(Account) && NotDeleted(Channel) && Owns(Channel) | Signed JSON data (POST)
 POST | post/update | **Pubkey account auth** | NotDeleted(Account) && NotDeleted(Channel) && NotDeleted(Post) && Owns(Channel) | Signed JSON data (POST)
 POST | post/delete | **Pubkey account auth** | NotDeleted(Account) && NotDeleted(Channel) && NotDeleted(Post) && Owns(Channel) | Signed JSON data (POST)
@@ -433,6 +435,64 @@ Payload:
 {
     "command": "channel_delete",
     "uuid": "<channel's uuid>"
+}
+```
+
+Response example:
+
+```
+HTTP/1.1 200
+{
+    "status": "ok"
+}
+```
+
+### POST /api/v1/channel/add_author
+
+You cannot add yourself as an author.
+
+**Post data:** Alarkhabil-ed25519-signed JSON
+
+**Response type:** JSON
+
+Will return **400 Bad Request** for invalid requests.
+
+Payload:
+
+```
+{
+    "command": "channel_add_author",
+    "uuid": "<channel's uuid>",
+    "author_uuid": "<author's uuid>"
+}
+```
+
+Response example:
+
+```
+HTTP/1.1 200
+{
+    "status": "ok"
+}
+```
+
+### POST /api/v1/channel/remove_author
+
+You cannot remove yourself from a channel.
+
+**Post data:** Alarkhabil-ed25519-signed JSON
+
+**Response type:** JSON
+
+Will return **400 Bad Request** for invalid requests.
+
+Payload:
+
+```
+{
+    "command": "channel_remove_author",
+    "uuid": "<channel's uuid>",
+    "author_uuid": "<author's uuid>"
 }
 ```
 
