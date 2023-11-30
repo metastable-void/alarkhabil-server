@@ -7,7 +7,7 @@ use sha2::Sha256;
 use hmac::{Hmac, Mac};
 
 use digest::CtOutput;
-use generic_array::GenericArray;
+use digest::generic_array::GenericArray;
 
 // Create alias for HMAC-SHA256
 type HmacSha256 = Hmac<Sha256>;
