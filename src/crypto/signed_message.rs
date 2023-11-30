@@ -114,7 +114,7 @@ impl SignedMessage {
         hmac.update(self.msg.as_slice());
         let signature = hmac.finalize();
 
-        if signature != CtOutput::new(GenericArray::clone_from_slice(&self.sig)) {
+        if signature != CtOutput::new(GenericArray::from_slice(&self.sig).clone()) {
             return Err(anyhow::anyhow!("Invalid signature"));
         }
 
